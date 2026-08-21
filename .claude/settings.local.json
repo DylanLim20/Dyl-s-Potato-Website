@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"^   [0-9]*\\\\. \\\\|^/\\\\* ====\" css/style.css)",
+      "Bash(python -)",
+      "WebSearch",
+      "Bash(python \"C:/Users/Dylan/AppData/Local/Temp/claude/C--VSCODE-portfolio/67fc238b-1dce-4ee0-a313-9c32095de3c2/scratchpad/gen.py\")"
+    ]
+  }
+}

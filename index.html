@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Dylan — Developer &amp; Cardist</title>
+  <meta name="description" content="Dylan — ICT student at Asia Pacific University. Python, Java and web projects, plus cardistry and diabolo.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<!-- w-beach sets the palette; data-scene tells js/scenes.js what to paint. -->
+<body class="w-beach" data-scene="beach">
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- The living background. Decorative, so it's hidden from screen readers
+     and never takes a click. -->
+<canvas class="scene" aria-hidden="true"></canvas>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="mark" href="index.html"><span class="mark-dot" aria-hidden="true"></span> Dylan</a>
+
+    <button class="burger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav" aria-label="Main">
+      <ul class="nav-list">
+        <li><a class="nav-a" href="index.html" aria-current="page">Home</a></li>
+        <li><a class="nav-a" href="projects.html">Projects</a></li>
+        <li><a class="nav-a" href="hobbies.html">Hobbies</a></li>
+        <li><a class="nav-a" href="gallery.html">Gallery</a></li>
+        <li><a class="nav-a" href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+
+    <p class="world">Shore</p>
+  </div>
+</header>
+
+
+<main id="main">
+
+  <!-- ==========================================================
+       HERO
+       .catch is a transparent layer that sits over the whole
+       hero and under its content. It's there so a tap or drag
+       anywhere in the hero reaches the page rather than landing
+       on a heading — the ripples and the wake are drawn on the
+       canvas behind by js/scenes.js.
+       ========================================================== -->
+  <section class="hero">
+    <div class="catch" aria-hidden="true"></div>
+
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <p class="eyebrow">Diploma in ICT — Asia Pacific University</p>
+
+        <h1 class="h1">I build things, and I <span class="glow">spin objects</span> in the air.</h1>
+
+        <p class="lede">
+          Computer science student in Penang. I like making small, precise
+          things work properly — a Python script or a card flourish, it's the
+          same instinct. Most of my time goes to code; the rest goes to
+          cardistry, diabolo, and whatever court is free.
+        </p>
+
+        <div class="hero-btns">
+          <a class="btn btn-fill" href="projects.html">See the work <span class="arw" aria-hidden="true">&#8594;</span></a>
+          <a class="btn btn-line" href="assets/resume.pdf">Resume <span class="arw" aria-hidden="true">&#8594;</span></a>
+        </div>
+
+        <p class="hint">Tap the water &middot; drag to leave a wake</p>
+      </div>
+
+      <figure class="portrait">
+        <img src="assets/Dylan1.jpg" alt="Portrait of Dylan" width="480" height="600">
+        <button class="portrait-btn" type="button">Photo 1 / 2</button>
+      </figure>
+    </div>
+  </section>
+
+
+  <!-- ==========================================================
+       THE FIVE PLACES
+       Each card previews the palette of the page it opens, so
+       the menu doubles as a map.
+       ========================================================== -->
+  <section class="section" aria-labelledby="places-h">
+    <div class="wrap">
+      <p class="eyebrow">Five places</p>
+      <h2 class="h2" id="places-h">Pick somewhere</h2>
+      <p class="lede">Every page is its own weather. They all react to you.</p>
+
+      <div class="worlds rise" style="margin-top: 2.25rem;">
+
+        <a class="world-card" data-magnet="5" href="projects.html">
+          <span class="world-swatch" aria-hidden="true">
+            <span style="background:#A78BFA"></span>
+            <span style="background:#7DD8FF"></span>
+            <span style="background:#06040F"></span>
+          </span>
+          <span class="world-name">Projects</span>
+          <span class="world-sub">Galaxy · constellations</span>
+        </a>
+
+        <a class="world-card" data-magnet="5" href="hobbies.html">
+          <span class="world-swatch" aria-hidden="true">
+            <span style="background:#FF9BC2"></span>
+            <span style="background:#FFC9A8"></span>
+            <span style="background:#170A11"></span>
+          </span>
+          <span class="world-name">Hobbies</span>
+          <span class="world-sub">Blossom · a gust</span>
+        </a>
+
+        <a class="world-card" data-magnet="5" href="gallery.html">
+          <span class="world-swatch" aria-hidden="true">
+            <span style="background:#6EE7A0"></span>
+            <span style="background:#C6E86B"></span>
+            <span style="background:#050E0A"></span>
+          </span>
+          <span class="world-name">Gallery</span>
+          <span class="world-sub">Forest · fireflies</span>
+        </a>
+
+        <a class="world-card" data-magnet="5" href="contact.html">
+          <span class="world-swatch" aria-hidden="true">
+            <span style="background:#BFE6FF"></span>
+            <span style="background:#E8F4FF"></span>
+            <span style="background:#080F17"></span>
+          </span>
+          <span class="world-name">Contact</span>
+          <span class="world-sub">Snow · settling drifts</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==========================================================
+       THE STATEMENT
+       Set out of focus and pulled sharp word by word as it comes
+       up the screen. Scrolling is the animation — go back up and
+       it softens again. js/main.js splits the line into words;
+       without it the sentence just reads normally.
+       ========================================================== -->
+  <section class="section" style="padding-block: clamp(4rem, 12vw, 9rem);">
+    <div class="wrap">
+      <h2 class="focus-line" style="font-family: var(--display); font-weight: 700;
+          font-size: clamp(1.9rem, 5.6vw, 3.6rem); line-height: 1.15;
+          letter-spacing: -0.03em; max-width: 20ch;">
+        A move takes weeks to get clean and a minute to explain. Code is the
+        same, with fewer dropped objects.
+      </h2>
+    </div>
+  </section>
+
+
+  <!-- ==========================================================
+       QUICK FACTS
+       ========================================================== -->
+  <section class="section" style="padding-top: 0;" aria-labelledby="facts-h">
+    <div class="wrap">
+      <p class="eyebrow">The short version</p>
+      <h2 class="h2" id="facts-h">Where I'm at</h2>
+
+      <div class="facts rise" style="margin-top: 2.25rem;">
+
+        <article class="card fact">
+          <p class="fact-k">Studying</p>
+          <p class="fact-v">Diploma in ICT</p>
+          <p class="fact-s">Asia Pacific University. Data structures, algorithms, databases, web development.</p>
+        </article>
+
+        <article class="card fact">
+          <p class="fact-k">Experience</p>
+          <p class="fact-v">Intern — Jemco Manufacturing</p>
+          <p class="fact-s">First time seeing how IT actually runs inside a factory.</p>
+        </article>
+
+        <article class="card fact">
+          <p class="fact-k">Building with</p>
+          <p class="fact-v">Python, Java, JavaScript</p>
+          <p class="fact-s">Plus HTML &amp; CSS, Figma, Git and an Arduino.</p>
+        </article>
+
+        <article class="card fact">
+          <p class="fact-k">Away from the desk</p>
+          <p class="fact-v">Cardistry &amp; diabolo</p>
+          <p class="fact-s">Both are precision, repetition, and making hard motion look easy.</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>
+      <p class="foot-k">Get in touch</p>
+      <a class="foot-mail" href="mailto:dryunkang@gmail.com">dryunkang@gmail.com</a>
+    </div>
+
+    <ul class="socials">
+      <li><a class="social" data-magnet="7" href="https://github.com/DylanLim20" aria-label="GitHub" target="_blank" rel="noopener">GH</a></li>
+      <li><a class="social" data-magnet="7" href="https://www.linkedin.com/in/ryun-kang-lim-a1902739a" aria-label="LinkedIn" target="_blank" rel="noopener">LI</a></li>
+      <li><a class="social" data-magnet="7" href="https://www.instagram.com/potatodyl/" aria-label="Instagram" target="_blank" rel="noopener">IG</a></li>
+    </ul>
+
+    <p class="foot-note">© 2026 Dylan. Built with HTML, CSS and JavaScript.</p>
+  </div>
+</footer>
+
+<script src="js/scenes.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

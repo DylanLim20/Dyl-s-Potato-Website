@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Effects sandbox — Dylan</title>
+
+<!-- ==========================================================================
+     SANDBOX — NOT PART OF THE SITE
+
+     Nothing here is linked from the portfolio and nothing here touches
+     css/style.css or js/main.js. It's a scratch page for looking at six
+     pointer-driven effects and four palettes before deciding whether any
+     of them belong on the real thing. Delete the whole sandbox/ folder
+     and the site is unaffected.
+
+     Everything is self-contained in this one file on purpose — no shared
+     stylesheet, no build, no dependencies. Open it by double-clicking.
+
+     Every effect is driven by Pointer Events, which means one code path
+     covers mouse, trackpad, pen and finger. Drag works the same as hover.
+     ========================================================================== -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* --------------------------------------------------------------------------
+   PALETTES
+   Each one only redefines colour. Every effect below reads these variables
+   and nothing else, so switching palette recolours all six at once.
+   -------------------------------------------------------------------------- */
+
+[data-palette="midnight"] {          /* the site as it stands */
+  --bg: #0A0612;  --panel: #150C26;  --ink: #EDE6FA;
+  --muted: #9C8DBC;  --line: #2E1D4F;
+  --accent: #B14BFF;  --accent-2: #6E2BFF;  --on-accent: #12061F;
+}
+
+[data-palette="ice"] {               /* colder, more machined */
+  --bg: #04070E;  --panel: #0B1520;  --ink: #E4F4FA;
+  --muted: #7E9CAB;  --line: #16303F;
+  --accent: #35E0F0;  --accent-2: #1E7FD0;  --on-accent: #04121A;
+}
+
+[data-palette="ember"] {             /* warm, closer to print */
+  --bg: #0C0705;  --panel: #1C110B;  --ink: #F6E9E0;
+  --muted: #A98D7C;  --line: #3A2116;
+  --accent: #FF6B2C;  --accent-2: #C42D6B;  --on-accent: #180903;
+}
+
+[data-palette="bone"] {              /* the light one */
+  --bg: #EDE8E0;  --panel: #FFFFFF;  --ink: #14100C;
+  --muted: #6B6154;  --line: #CDC4B6;
+  --accent: #6B2BD9;  --accent-2: #B14BFF;  --on-accent: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   PAGE FURNITURE
+   -------------------------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", Arial, sans-serif;
+  line-height: 1.6;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.wrap { max-width: 1180px; margin-inline: auto; padding: 2rem 1.5rem 4rem; }
+
+.masthead { margin-bottom: 2rem; }
+
+.masthead h1 {
+  margin: 0 0 0.4rem;
+  font-family: "Chakra Petch", sans-serif;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  letter-spacing: -0.02em;
+}
+
+.masthead p { margin: 0; max-width: 62ch; color: var(--muted); font-size: 0.92rem; }
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+  padding-block: 1.2rem;
+  border-block: 1px solid var(--line);
+  margin-bottom: 1.5rem;
+}
+
+.bar-group { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.bar-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+.chip {
+  padding: 0.4rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+
+.chip:hover { color: var(--ink); border-color: var(--accent); }
+
+.chip.is-on {
+  color: var(--on-accent);
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* The dot on a palette chip shows the accent colour it switches to. */
+.dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  margin-right: 0.5rem;
+  vertical-align: 1px;
+  border-radius: 50%;
+}
+
+/* --- The stage --- */
+
+.stage {
+  position: relative;
+  height: min(66vh, 560px);
+  min-height: 340px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background-color: var(--panel);
+  /* Stops a finger-drag from scrolling the page while it's driving an
+     effect. Without this, touch does nothing but scroll. */
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+}
+
+.scene.is-on { display: grid; }
+
+.readout {
+  position: absolute;
+  left: 1rem; bottom: 0.9rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.hint {
+  position: absolute;
+  right: 1rem; top: 0.9rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.caption {
+  margin-top: 1.2rem;
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: baseline;
+}
+
+.caption h2 {
+  margin: 0;
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+}
+
+.caption p { margin: 0; color: var(--muted); font-size: 0.9rem; max-width: 62ch; }
+
+@media (max-width: 700px) {
+  .caption { grid-template-columns: 1fr; gap: 0.4rem; }
+}
+
+
+/* ==========================================================================
+   1. DECK SPREAD
+   A fan of cards pivoting around a point below the stage. Pointer X opens
+   and closes the spread; pointer Y bends the arc.
+   ========================================================================== */
+
+.deck { position: relative; width: 100%; height: 100%; }
+
+.card {
+  position: absolute;
+  left: 50%; top: 58%;
+  width: clamp(56px, 9vw, 88px);
+  aspect-ratio: 5 / 7;
+  margin-left: calc(clamp(56px, 9vw, 88px) / -2);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background-color: var(--ink);
+  /* The pivot sits well below the card, so rotating it sweeps the card
+     around a wide arc — which is what makes a fan a fan. */
+  transform-origin: 50% 260%;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  will-change: transform;
+}
+
+/* Alternate cards show their back, so the fan reads as a deck. */
+.card:nth-child(odd) {
+  background-color: var(--accent);
+  background-image: repeating-linear-gradient(
+    45deg, rgba(255,255,255,0.16) 0 2px, transparent 2px 7px);
+}
+
+.card::after {                    /* the index corner */
+  content: "";
+  position: absolute;
+  left: 6px; top: 6px;
+  width: 7px; height: 7px;
+  border-left: 1.5px solid var(--bg);
+  border-top: 1.5px solid var(--bg);
+  opacity: 0.5;
+}
+
+
+/* ==========================================================================
+   2. TORCH
+   Two copies of the same layout stacked. The top one is masked to a circle
+   that follows the pointer, so moving it "uncovers" a different version of
+   the same page.
+   ========================================================================== */
+
+.torch { position: relative; width: 100%; height: 100%; }
+
+.torch-layer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.torch-word {
+  font-family: "Chakra Petch", sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.4rem, 11vw, 7rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+
+.torch-sub {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin: 0.8rem 0 0;
+}
+
+/* Underneath: quiet. */
+.torch-under { color: var(--muted); opacity: 0.35; }
+
+/* On top: loud, plus a blueprint grid — and only visible inside the
+   circle. Two mask properties because Safari still wants the prefix. */
+.torch-over {
+  color: var(--accent);
+  background-image:
+    repeating-linear-gradient(0deg,  color-mix(in srgb, var(--accent) 22%, transparent) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, transparent) 0 1px, transparent 1px 26px);
+  -webkit-mask-image: radial-gradient(circle 150px at var(--px, 50%) var(--py, 50%), #000 0 55%, transparent 100%);
+          mask-image: radial-gradient(circle 150px at var(--px, 50%) var(--py, 50%), #000 0 55%, transparent 100%);
+}
+
+/* A ring drawn on the edge of the torch, so it reads as a lens. */
+.torch-ring {
+  position: absolute;
+  width: 300px; height: 300px;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  opacity: 0.5;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+
+/* ==========================================================================
+   3. MAGNETIC TYPE
+   Every letter is its own element. Each one is pushed directly away from
+   the pointer, hardest when closest, and springs back when it leaves.
+   ========================================================================== */
+
+.mag {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.02em;
+  padding: 1.5rem;
+}
+
+.mag-letter {
+  display: inline-block;
+  font-family: "Chakra Petch", sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.2rem, 10vw, 6.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  /* The spring. Nothing here is animated by JS — JS only writes the
+     target transform and this easing does the travel. */
+  transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1),
+              color 0.45s ease;
+  will-change: transform;
+}
+
+.mag-space { width: 0.32em; }
+
+
+/* ==========================================================================
+   4. GRID WARP
+   A lattice of dots on a canvas, pulled out of line by the pointer as if
+   the grid were a sheet with a weight on it. Canvas rather than elements
+   because this is ~600 points moving every frame.
+   ========================================================================== */
+
+.warp { width: 100%; height: 100%; display: block; }
+
+
+/* ==========================================================================
+   5. SPIN WEIGHT
+   A rotor that takes speed from how fast the pointer moves and then winds
+   down on its own — the way a diabolo keeps spinning after you stop
+   feeding it.
+   ========================================================================== */
+
+.spin { display: grid; place-items: center; gap: 1.5rem; }
+
+.rotor { position: relative; width: clamp(150px, 34vw, 240px); aspect-ratio: 1; }
+
+.rotor-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+}
+
+.rotor-ring:nth-child(2) { inset: 14%; }
+.rotor-ring:nth-child(3) { inset: 28%; }
+
+/* The spoked disc that actually turns. conic-gradient makes the spokes
+   without a single extra element. */
+.rotor-disc {
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  background:
+    conic-gradient(from 0deg,
+      var(--accent) 0 3deg, transparent 3deg 45deg,
+      var(--accent-2) 45deg 48deg, transparent 48deg 90deg,
+      var(--accent) 90deg 93deg, transparent 93deg 135deg,
+      var(--accent-2) 135deg 138deg, transparent 138deg 180deg,
+      var(--accent) 180deg 183deg, transparent 183deg 225deg,
+      var(--accent-2) 225deg 228deg, transparent 228deg 270deg,
+      var(--accent) 270deg 273deg, transparent 273deg 315deg,
+      var(--accent-2) 315deg 318deg, transparent 318deg 360deg);
+  will-change: transform;
+}
+
+.rotor-hub {
+  position: absolute;
+  inset: 43%;
+  border-radius: 50%;
+  background-color: var(--accent);
+}
+
+.rpm {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rpm b { color: var(--accent); font-weight: 500; }
+
+
+/* ==========================================================================
+   6. CHROMATIC DRAG
+   Three copies of a word. Two of them chase the pointer offset on a delay,
+   so fast movement tears them apart into colour fringes and stopping lets
+   them snap back into register.
+   ========================================================================== */
+
+.chroma { position: relative; display: grid; place-items: center; }
+
+.chroma-copy {
+  grid-area: 1 / 1;
+  font-family: "Chakra Petch", sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.2rem, 10vw, 6.5rem);
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.chroma-a { color: var(--accent);   mix-blend-mode: screen; }
+.chroma-b { color: var(--accent-2); mix-blend-mode: screen; }
+.chroma-c { color: var(--ink); }
+
+/* screen blending does nothing useful on a light background, so the two
+   fringe copies just go translucent there instead. */
+[data-palette="bone"] .chroma-a,
+[data-palette="bone"] .chroma-b { mix-blend-mode: multiply; opacity: 0.55; }
+
+
+/* --------------------------------------------------------------------------
+   REDUCED MOTION
+   Everything still draws — it just stops reacting. The JS checks the same
+   setting and skips its pointer listeners.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .mag-letter, .rotor-disc, .chroma-copy { transition: none !important; }
+}
+</style>
+</head>
+
+<body data-palette="midnight">
+
+<div class="wrap">
+
+  <div class="masthead">
+    <h1>Six things a cursor could do</h1>
+    <p>
+      All of these work with a mouse and with a finger — drag on a phone and
+      you get the same result as hovering on a laptop. Try each one in each
+      palette; the two choices are independent. Nothing here is wired into
+      the site yet.
+    </p>
+  </div>
+
+  <div class="bar">
+    <div class="bar-group">
+      <p class="bar-label">Effect</p>
+      <div class="chips" id="effect-chips">
+        <button class="chip is-on" data-scene="deck">01 Deck spread</button>
+        <button class="chip" data-scene="torch">02 Torch</button>
+        <button class="chip" data-scene="mag">03 Magnetic type</button>
+        <button class="chip" data-scene="warp">04 Grid warp</button>
+        <button class="chip" data-scene="spin">05 Spin weight</button>
+        <button class="chip" data-scene="chroma">06 Chromatic drag</button>
+      </div>
+    </div>
+
+    <div class="bar-group">
+      <p class="bar-label">Palette</p>
+      <div class="chips" id="palette-chips">
+        <button class="chip is-on" data-palette="midnight"><span class="dot" style="background:#B14BFF"></span>Midnight</button>
+        <button class="chip" data-palette="ice"><span class="dot" style="background:#35E0F0"></span>Ice</button>
+        <button class="chip" data-palette="ember"><span class="dot" style="background:#FF6B2C"></span>Ember</button>
+        <button class="chip" data-palette="bone"><span class="dot" style="background:#6B2BD9"></span>Bone</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <p class="hint" id="hint">Move / drag</p>
+    <p class="readout" id="readout">&nbsp;</p>
+
+    <!-- 01 -->
+    <div class="scene is-on" data-scene="deck">
+      <div class="deck" id="deck"></div>
+    </div>
+
+    <!-- 02 -->
+    <div class="scene" data-scene="torch">
+      <div class="torch" id="torch">
+        <div class="torch-layer torch-under">
+          <p class="torch-word">Dylan</p>
+          <p class="torch-sub">Diploma in ICT — APU</p>
+        </div>
+        <div class="torch-layer torch-over" id="torch-over">
+          <p class="torch-word">Dylan</p>
+          <p class="torch-sub">Python · Java · JS · Figma · Git</p>
+        </div>
+        <div class="torch-ring" id="torch-ring"></div>
+      </div>
+    </div>
+
+    <!-- 03 -->
+    <div class="scene" data-scene="mag">
+      <div class="mag" id="mag"></div>
+    </div>
+
+    <!-- 04 -->
+    <div class="scene" data-scene="warp">
+      <canvas class="warp" id="warp"></canvas>
+    </div>
+
+    <!-- 05 -->
+    <div class="scene" data-scene="spin">
+      <div class="spin">
+        <div class="rotor">
+          <div class="rotor-ring"></div>
+          <div class="rotor-ring"></div>
+          <div class="rotor-ring"></div>
+          <div class="rotor-disc" id="rotor-disc"></div>
+          <div class="rotor-hub"></div>
+        </div>
+        <p class="rpm">Spin <b id="rpm-value">000</b> rpm</p>
+      </div>
+    </div>
+
+    <!-- 06 -->
+    <div class="scene" data-scene="chroma">
+      <div class="chroma">
+        <p class="chroma-copy chroma-a" id="chroma-a">Cardistry</p>
+        <p class="chroma-copy chroma-b" id="chroma-b">Cardistry</p>
+        <p class="chroma-copy chroma-c">Cardistry</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="caption">
+    <h2 id="cap-title">Deck spread</h2>
+    <p id="cap-body"></p>
+  </div>
+
+</div>
+
+<script>
+/* ==========================================================================
+   Shared plumbing
+   ========================================================================== */
+
+const stage = document.getElementById("stage");
+const readout = document.getElementById("readout");
+const capTitle = document.getElementById("cap-title");
+const capBody = document.getElementById("cap-body");
+
+const CAPTIONS = {
+  deck:   ["Deck spread", "A fan of cards pivoting off a point below the frame. Pointer X opens and closes the spread, pointer Y bends the arc. The one on this list that's actually about you — nobody else's portfolio can justify a deck of cards."],
+  torch:  ["Torch", "Two versions of the same layout stacked, with the top one masked to a circle that follows you. Moving the pointer uncovers a different design underneath rather than adding decoration on top. Cheapest of the six, and the most legible."],
+  mag:    ["Magnetic type", "Each letter is its own element, shoved directly away from the pointer and sprung back by CSS easing. JavaScript only sets the target; the transition does the travel, which is why it stays smooth."],
+  warp:   ["Grid warp", "Six hundred points on a canvas, displaced as though the lattice were a sheet with a weight rolling across it. Points near the pointer also brighten and grow. Canvas because this many moving elements in the DOM would crawl."],
+  spin:   ["Spin weight", "The rotor takes speed from how fast you move and then winds down on its own, so it keeps turning after you stop and wobbles as it dies. Diabolo physics — feed it or it drops."],
+  chroma: ["Chromatic drag", "Three copies of a word; two chase the pointer on different delays. Move fast and they tear apart into colour fringes, stop and they snap back into register. Fast movement is the whole point, so it rewards fidgeting."]
+};
+
+// Pointer position in stage coordinates, plus whether it's currently inside.
+const pointer = { x: 0, y: 0, active: false, vx: 0, vy: 0 };
+let lastX = 0, lastY = 0;
+
+const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function onPointer(event) {
+  const box = stage.getBoundingClientRect();
+  const x = event.clientX - box.left;
+  const y = event.clientY - box.top;
+
+  pointer.vx = x - lastX;
+  pointer.vy = y - lastY;
+  lastX = x; lastY = y;
+
+  pointer.x = x;
+  pointer.y = y;
+  pointer.active = true;
+
+  readout.textContent =
+    "x " + Math.round(x) + "  y " + Math.round(y) +
+    "  speed " + Math.round(Math.hypot(pointer.vx, pointer.vy));
+}
+
+if (!REDUCED) {
+  // pointermove covers mouse, pen and touch-drag in one listener.
+  stage.addEventListener("pointermove", onPointer);
+  stage.addEventListener("pointerdown", onPointer);
+  stage.addEventListener("pointerleave", function () {
+    pointer.active = false;
+    readout.innerHTML = "&nbsp;";
+  });
+}
+
+/* ==========================================================================
+   01. DECK SPREAD
+   ========================================================================== */
+
+const CARD_COUNT = 17;
+const deck = document.getElementById("deck");
+const cards = [];
+
+for (let i = 0; i < CARD_COUNT; i++) {
+  const card = document.createElement("div");
+  card.className = "card";
+  deck.appendChild(card);
+  cards.push(card);
+}
+
+function drawDeck(w, h) {
+  // Pointer X across the stage sets how wide the fan opens; pointer Y
+  // sets how far the cards ride up the arc.
+  const openness = pointer.active ? pointer.x / w : 0.5;
+  const lift = pointer.active ? (1 - pointer.y / h) : 0.5;
+
+  const totalArc = 12 + openness * 155;   // degrees, tip to tip
+  const step = totalArc / (CARD_COUNT - 1);
+
+  for (let i = 0; i < CARD_COUNT; i++) {
+    const angle = -totalArc / 2 + i * step;
+    // Cards further from the middle sit slightly lower, which is what
+    // stops a flat fan looking like a paper cutout.
+    const dip = Math.abs(angle) * 0.25;
+    cards[i].style.transform =
+      "rotate(" + angle.toFixed(2) + "deg) " +
+      "translateY(" + (dip - lift * 40).toFixed(1) + "px)";
+  }
+}
+
+/* ==========================================================================
+   02. TORCH
+   ========================================================================== */
+
+const torchOver = document.getElementById("torch-over");
+const torchRing = document.getElementById("torch-ring");
+
+function drawTorch(w, h) {
+  const x = pointer.active ? pointer.x : w / 2;
+  const y = pointer.active ? pointer.y : h / 2;
+
+  // The mask reads these two custom properties; writing them is the
+  // entire effect.
+  torchOver.style.setProperty("--px", x + "px");
+  torchOver.style.setProperty("--py", y + "px");
+  torchRing.style.transform = "translate(" + (x - 150) + "px," + (y - 150) + "px)";
+}
+
+/* ==========================================================================
+   03. MAGNETIC TYPE
+   ========================================================================== */
+
+const MAG_WORD = "Precision";
+const mag = document.getElementById("mag");
+const letters = [];
+
+for (const character of MAG_WORD) {
+  const span = document.createElement("span");
+  span.className = character === " " ? "mag-letter mag-space" : "mag-letter";
+  span.textContent = character === " " ? " " : character;
+  mag.appendChild(span);
+  letters.push(span);
+}
+
+// Letter positions only change on resize, so they're measured once and
+// cached rather than read every frame (reading layout in a rAF loop is
+// what makes this kind of effect stutter).
+let letterCentres = [];
+
+function measureLetters() {
+  const box = stage.getBoundingClientRect();
+  letterCentres = letters.map(function (span) {
+    const r = span.getBoundingClientRect();
+    return { x: r.left - box.left + r.width / 2, y: r.top - box.top + r.height / 2 };
+  });
+}
+
+const MAG_RADIUS = 190;
+
+function drawMag() {
+  for (let i = 0; i < letters.length; i++) {
+    const c = letterCentres[i];
+    if (!c) continue;
+
+    let dx = 0, dy = 0, near = 0;
+
+    if (pointer.active) {
+      const ox = c.x - pointer.x;
+      const oy = c.y - pointer.y;
+      const dist = Math.hypot(ox, oy) || 1;
+
+      if (dist < MAG_RADIUS) {
+        near = 1 - dist / MAG_RADIUS;          // 1 at the pointer, 0 at the edge
+        const push = near * near * 90;          // squared, so the falloff bites
+        dx = (ox / dist) * push;
+        dy = (oy / dist) * push;
+      }
+    }
+
+    letters[i].style.transform =
+      "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) " +
+      "rotate(" + (dx * 0.08).toFixed(2) + "deg)";
+    letters[i].style.color =
+      near > 0.15 ? "var(--accent)" : "var(--ink)";
+  }
+}
+
+/* ==========================================================================
+   04. GRID WARP
+   ========================================================================== */
+
+const warp = document.getElementById("warp");
+const ctx = warp.getContext("2d");
+const SPACING = 26;
+let warpPoints = [];
+
+function buildWarp(w, h) {
+  // Match the canvas's pixel buffer to the screen's density, or it looks
+  // soft on a phone and on any retina display.
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  warp.width = w * dpr;
+  warp.height = h * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  warpPoints = [];
+  for (let y = SPACING / 2; y < h; y += SPACING) {
+    for (let x = SPACING / 2; x < w; x += SPACING) {
+      warpPoints.push({ x: x, y: y });
+    }
+  }
+}
+
+const WARP_RADIUS = 170;
+
+function drawWarp(w, h) {
+  ctx.clearRect(0, 0, w, h);
+
+  const style = getComputedStyle(document.body);
+  const accent = style.getPropertyValue("--accent").trim();
+  const muted = style.getPropertyValue("--muted").trim();
+
+  for (const point of warpPoints) {
+    let x = point.x, y = point.y, near = 0;
+
+    if (pointer.active) {
+      const ox = point.x - pointer.x;
+      const oy = point.y - pointer.y;
+      const dist = Math.hypot(ox, oy) || 1;
+
+      if (dist < WARP_RADIUS) {
+        near = 1 - dist / WARP_RADIUS;
+        const push = near * near * 46;
+        x += (ox / dist) * push;
+        y += (oy / dist) * push;
+      }
+    }
+
+    ctx.beginPath();
+    ctx.arc(x, y, 1 + near * 2.6, 0, Math.PI * 2);
+    ctx.fillStyle = near > 0.05 ? accent : muted;
+    ctx.globalAlpha = 0.25 + near * 0.75;
+    ctx.fill();
+  }
+
+  ctx.globalAlpha = 1;
+}
+
+/* ==========================================================================
+   05. SPIN WEIGHT
+   ========================================================================== */
+
+const disc = document.getElementById("rotor-disc");
+const rpmValue = document.getElementById("rpm-value");
+
+let spinSpeed = 0;      // degrees per frame
+let spinAngle = 0;
+
+function drawSpin() {
+  // Pointer speed feeds the rotor; friction takes it away again.
+  if (pointer.active) {
+    spinSpeed += Math.hypot(pointer.vx, pointer.vy) * 0.045;
+    pointer.vx *= 0.6;
+    pointer.vy *= 0.6;
+  }
+
+  spinSpeed *= 0.985;                       // friction
+  spinSpeed = Math.min(spinSpeed, 34);      // terminal speed
+  spinAngle = (spinAngle + spinSpeed) % 360;
+
+  // Below a certain speed a real diabolo starts to tilt and wander. The
+  // wobble is scaled to how close to stalling it is.
+  const stalling = Math.max(0, 1 - spinSpeed / 6);
+  const wobble = Math.sin(Date.now() / 120) * stalling * 7;
+
+  disc.style.transform =
+    "rotate(" + spinAngle.toFixed(1) + "deg) " +
+    "skewX(" + wobble.toFixed(2) + "deg)";
+
+  rpmValue.textContent =
+    String(Math.round(spinSpeed * 10)).padStart(3, "0");
+}
+
+/* ==========================================================================
+   06. CHROMATIC DRAG
+   ========================================================================== */
+
+const chromaA = document.getElementById("chroma-a");
+const chromaB = document.getElementById("chroma-b");
+
+// Each copy keeps its own position and eases toward the pointer at its own
+// rate. Different rates are what pulls them apart.
+let aX = 0, aY = 0, bX = 0, bY = 0;
+
+function drawChroma(w, h) {
+  const targetX = pointer.active ? (pointer.x - w / 2) * 0.06 : 0;
+  const targetY = pointer.active ? (pointer.y - h / 2) * 0.06 : 0;
+
+  aX += (targetX - aX) * 0.16;
+  aY += (targetY - aY) * 0.16;
+  bX += (-targetX - bX) * 0.09;
+  bY += (-targetY - bY) * 0.09;
+
+  chromaA.style.transform = "translate(" + aX.toFixed(2) + "px," + aY.toFixed(2) + "px)";
+  chromaB.style.transform = "translate(" + bX.toFixed(2) + "px," + bY.toFixed(2) + "px)";
+}
+
+/* ==========================================================================
+   Scene switching and the single animation loop
+   ========================================================================== */
+
+let current = "deck";
+
+function setScene(name) {
+  current = name;
+
+  document.querySelectorAll(".scene").forEach(function (scene) {
+    scene.classList.toggle("is-on", scene.dataset.scene === name);
+  });
+  document.querySelectorAll("#effect-chips .chip").forEach(function (chip) {
+    chip.classList.toggle("is-on", chip.dataset.scene === name);
+  });
+
+  capTitle.textContent = CAPTIONS[name][0];
+  capBody.textContent = CAPTIONS[name][1];
+
+  // The magnetic letters are display:none until their scene is switched
+  // on, and a hidden element measures as zero — so they have to be
+  // measured here, after the class above has been applied. Reading
+  // getBoundingClientRect forces the layout synchronously, which is
+  // exactly what's wanted for a one-off like this.
+  if (name === "mag") measureLetters();
+}
+
+document.getElementById("effect-chips").addEventListener("click", function (event) {
+  const chip = event.target.closest(".chip");
+  if (chip) setScene(chip.dataset.scene);
+});
+
+document.getElementById("palette-chips").addEventListener("click", function (event) {
+  const chip = event.target.closest(".chip");
+  if (!chip) return;
+
+  document.body.dataset.palette = chip.dataset.palette;
+  document.querySelectorAll("#palette-chips .chip").forEach(function (each) {
+    each.classList.toggle("is-on", each === chip);
+  });
+});
+
+// One loop drives whichever scene is showing. Running six loops at once
+// would burn a laptop battery for five hidden effects.
+function frame() {
+  const box = stage.getBoundingClientRect();
+
+  if (current === "deck") drawDeck(box.width, box.height);
+  else if (current === "torch") drawTorch(box.width, box.height);
+  else if (current === "mag") drawMag();
+  else if (current === "warp") drawWarp(box.width, box.height);
+  else if (current === "spin") drawSpin();
+  else if (current === "chroma") drawChroma(box.width, box.height);
+
+  requestAnimationFrame(frame);
+}
+
+function resize() {
+  const box = stage.getBoundingClientRect();
+  buildWarp(box.width, box.height);
+
+  // Only worth re-measuring while the letters are actually on screen;
+  // switching to that scene measures them anyway.
+  if (current === "mag") measureLetters();
+}
+
+window.addEventListener("resize", resize);
+
+setScene("deck");
+resize();
+requestAnimationFrame(frame);
+</script>
+
+</body>
+</html>

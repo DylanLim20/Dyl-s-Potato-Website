@@ -1,0 +1,1158 @@
+/* ==========================================================================
+   PORTFOLIO — STYLESHEET
+   Rebuilt. Five pages, five worlds. Each page keeps the same bones —
+   header, type scale, spacing, panels — and changes only its palette and
+   its living background:
+
+     Home      beach      warm teal, sand         ripples and a boat wake
+     Projects  galaxy     violet, star white      drifting stars, constellations
+     Hobbies   blossom    pink, deep plum         falling petals, a gust
+     Gallery   forest     green, near-black       fireflies drawn to the cursor
+     Contact   snow       cold blue, white        snowfall, swirl, settling drifts
+
+   The palette swap is one body class. The scene is one canvas driven by
+   js/scenes.js. Nothing else changes between pages, which is what keeps
+   five worlds feeling like one site.
+
+   CONTENTS
+   1. Palettes          6. Home
+   2. Base              7. Projects
+   3. Shell             8. Hobbies
+   4. Components        9. Gallery
+   5. Scene canvas     10. Contact
+                       11. Responsive
+                       12. Motion & accessibility
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. PALETTES
+   Every page defines the same eight names. Nothing below section 1 knows
+   which world it's in.
+   ========================================================================== */
+
+:root {
+  --ground:  #04070D;   /* page background */
+  --panel:   rgba(255, 255, 255, 0.04);
+  --line:    rgba(255, 255, 255, 0.10);
+  --line-2:  rgba(255, 255, 255, 0.18);
+  --ink:     #EEF4F7;   /* primary text */
+  --ink-2:   #9FB2C0;   /* secondary text */
+  --ink-3:   #61788A;   /* tertiary text */
+  --key:     #38E1C4;   /* accent */
+  --key-2:   #7FD8FF;   /* second accent */
+  --on-key:  #04171A;   /* text on accent */
+
+  --display: "Space Grotesk", "Segoe UI", sans-serif;
+  --body:    "Inter", -apple-system, Arial, sans-serif;
+  --mono:    "JetBrains Mono", "Courier New", monospace;
+
+  --r-sm: 12px;
+  --r:    18px;
+  --r-lg: 28px;
+
+  --shell: 1180px;
+  --pad:   clamp(1.15rem, 4vw, 2rem);
+  --gap:   clamp(3.5rem, 9vw, 7rem);
+}
+
+/* --- Beach: low sun on shallow water --- */
+.w-beach {
+  --ground: #03161C;
+  --ink:    #EDF7F5;
+  --ink-2:  #9CC3BE;
+  --ink-3:  #5B8A85;
+  --key:    #38E1C4;
+  --key-2:  #FFD9A0;
+  --on-key: #04171A;
+}
+
+/* --- Galaxy: no horizon at all --- */
+.w-galaxy {
+  --ground: #06040F;
+  --ink:    #F0EDFA;
+  --ink-2:  #A9A0C8;
+  --ink-3:  #6B6190;
+  --key:    #A78BFA;
+  --key-2:  #7DD8FF;
+  --on-key: #0C0718;
+}
+
+/* --- Blossom: dusk under a tree --- */
+.w-blossom {
+  --ground: #170A11;
+  --ink:    #FBEDF3;
+  --ink-2:  #D3A5B8;
+  --ink-3:  #966379;
+  --key:    #FF9BC2;
+  --key-2:  #FFC9A8;
+  --on-key: #1B0A11;
+}
+
+/* --- Forest: deep canopy, very little light --- */
+.w-forest {
+  --ground: #050E0A;
+  --ink:    #EAF6EC;
+  --ink-2:  #96BBA0;
+  --ink-3:  #587A62;
+  --key:    #6EE7A0;
+  --key-2:  #C6E86B;
+  --on-key: #04150B;
+}
+
+/* --- Snow: overcast, flat light --- */
+.w-snow {
+  --ground: #080F17;
+  --ink:    #F2F8FF;
+  --ink-2:  #A8BFD4;
+  --ink-3:  #66809A;
+  --key:    #BFE6FF;
+  --key-2:  #E8F4FF;
+  --on-key: #0A1622;
+}
+
+/* These two are built FROM the accents, so they have to be declared on the
+   same element the accents land on — the body. Declared up on :root they
+   would substitute the root's default cyan and every world would end up
+   with the beach gradient. */
+body {
+  --glow:  color-mix(in srgb, var(--key) 38%, transparent);
+  --sweep: linear-gradient(120deg, var(--key), var(--key-2));
+}
+
+
+/* ==========================================================================
+   2. BASE
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 0.6s ease;
+}
+
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+}
+
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+img { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; }
+a { color: var(--key); text-underline-offset: 3px; }
+
+::selection { background-color: var(--key); color: var(--on-key); }
+
+
+/* ==========================================================================
+   3. SHELL
+   ========================================================================== */
+
+.wrap {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background-color: color-mix(in srgb, var(--ground) 78%, transparent);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border-bottom: 1px solid var(--line);
+}
+
+.top-in {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 66px;
+}
+
+.mark {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.mark-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-image: var(--sweep);
+  box-shadow: 0 0 12px var(--glow);
+}
+
+.nav { margin-left: auto; }
+.nav-list { display: flex; align-items: center; gap: 0.2rem; }
+
+.nav-a {
+  display: block;
+  padding: 0.5rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.nav-a:hover { color: var(--ink); background-color: var(--panel); }
+
+.nav-a[aria-current] {
+  color: var(--on-key);
+  background-image: var(--sweep);
+}
+
+/* The world's name, printed small. It's the only label that tells you the
+   pages are five places rather than five pages. */
+.world {
+  padding-left: 1rem;
+  margin-left: 0.4rem;
+  border-left: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--key);
+}
+
+.burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 44px;
+  height: 40px;
+  padding: 0;
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+
+.burger span {
+  width: 17px;
+  height: 1.5px;
+  margin-inline: auto;
+  border-radius: 2px;
+  background-image: var(--sweep);
+}
+
+.foot {
+  margin-top: var(--gap);
+  padding-block: 2.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.foot-in {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.75rem;
+}
+
+.foot-k {
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.4rem;
+}
+
+.foot-mail {
+  font-family: var(--display);
+  font-size: clamp(1.15rem, 3vw, 1.65rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.foot-mail:hover { color: var(--key); }
+
+.socials { display: flex; gap: 0.55rem; }
+
+.social {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.social:hover { color: var(--key); border-color: var(--key); transform: translateY(-3px); }
+
+.foot-note {
+  flex-basis: 100%;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.8rem;
+  color: var(--ink-3);
+}
+
+
+/* ==========================================================================
+   4. COMPONENTS
+   ========================================================================== */
+
+.section { padding-block: var(--gap); }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.8rem 0.3rem 0.45rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background-color: var(--panel);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-image: var(--sweep);
+  box-shadow: 0 0 10px var(--glow);
+}
+
+.h1 { font-size: clamp(2.4rem, 7vw, 4.4rem); margin: 1.1rem 0 1rem; }
+.h2 { font-size: clamp(1.7rem, 4.2vw, 2.6rem); margin: 0.9rem 0 0.7rem; }
+
+.lede { max-width: 54ch; color: var(--ink-2); }
+
+.glow {
+  background-image: var(--sweep);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+
+.card {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background-color: var(--panel);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+/* A hairline of light along the top edge, so a panel reads as a lit
+   surface floating over the scene rather than a hole punched in it. */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--key), transparent);
+  opacity: 0.5;
+}
+
+/* --------------------------------------------------------------------------
+   BUTTONS
+   Four things happen on one button, and each is doing a different job:
+
+     1. Magnetic pull   — it leans toward the cursor before you arrive, so
+                          it feels like it wants to be pressed. (JS.)
+     2. Direction sweep — a colour wipes in from the edge the cursor
+                          actually crossed, and leaves by the opposite one.
+                          A sweep that always comes from the left is the
+                          tell that it's a stock effect.
+     3. Press ripple    — a ring from the exact point of the click.
+     4. Arrow loop      — the arrow flies off the right and returns from
+                          the left rather than just nudging.
+   -------------------------------------------------------------------------- */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.95rem 1.6rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--display);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  /* isolation keeps the sweep and the ripple behind the label without
+     needing a z-index on every child. */
+  isolation: isolate;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.3s, border-color 0.3s, color 0.3s;
+  will-change: transform;
+}
+
+/* The label has to sit above both layers. */
+.btn > * { position: relative; z-index: 2; }
+
+/* The sweep. JS writes --sx/--sy as the off-screen start position, chosen
+   from the edge the pointer crossed. */
+.btn-sweep {
+  position: absolute;
+  inset: -1px;
+  z-index: 1;
+  border-radius: inherit;
+  transform: translate(var(--sx, -101%), var(--sy, 0));
+  transition: transform 0.45s cubic-bezier(0.3, 0.8, 0.2, 1);
+}
+
+.btn:hover .btn-sweep,
+.btn:focus-visible .btn-sweep { transform: translate(0, 0); }
+
+/* The press ripple, placed at the click point by JS. */
+.btn-ripple {
+  position: absolute;
+  z-index: 1;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.35;
+  pointer-events: none;
+  animation: btn-ripple 620ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+@keyframes btn-ripple {
+  to { transform: scale(14); opacity: 0; }
+}
+
+/* --- Filled: gradient at rest, inverts to near-white on hover --- */
+
+.btn-fill {
+  background-image: var(--sweep);
+  color: var(--on-key);
+  box-shadow: 0 6px 26px var(--glow);
+}
+
+.btn-fill .btn-sweep { background-color: var(--ink); }
+
+.btn-fill:hover,
+.btn-fill:focus-visible {
+  color: var(--ground);
+  box-shadow: 0 14px 40px var(--glow);
+}
+
+/* --- Outlined: fills with the gradient --- */
+
+.btn-line {
+  border-color: var(--line-2);
+  background-color: var(--panel);
+  color: var(--ink);
+}
+
+.btn-line .btn-sweep { background-image: var(--sweep); }
+
+.btn-line:hover,
+.btn-line:focus-visible {
+  border-color: var(--key);
+  color: var(--on-key);
+}
+
+/* --- The arrow --- */
+
+.arw { display: inline-block; }
+
+.btn:hover .arw { animation: arw-loop 0.6s cubic-bezier(0.5, 0, 0.3, 1); }
+
+@keyframes arw-loop {
+  0%   { transform: translateX(0);     opacity: 1; }
+  45%  { transform: translateX(16px);  opacity: 0; }
+  55%  { transform: translateX(-16px); opacity: 0; }
+  100% { transform: translateX(0);     opacity: 1; }
+}
+
+/* Anything JS has made magnetic gets its own easing back to rest. */
+.magnet { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+
+/* --------------------------------------------------------------------------
+   SCROLL-FOCUS TEXT
+   The line starts out of focus and sharpens word by word as it comes up the
+   screen — so reading it is something the scroll does, not something that
+   has already happened by the time you arrive.
+
+   --p is written per word by JS, 0 (blurred) to 1 (sharp).
+   -------------------------------------------------------------------------- */
+
+.focus-line { --p: 0; }
+
+.fw {
+  display: inline-block;
+  /* A hair over one space, so words don't collide once they're inline-block
+     and the gaps stop collapsing. */
+  margin-right: 0.26em;
+  filter: blur(calc((1 - var(--p)) * 9px));
+  opacity: calc(0.1 + var(--p) * 0.9);
+  transform: translateY(calc((1 - var(--p)) * 14px));
+  /* Short, linear: the scroll position is the animation, so easing here
+     would fight it and feel laggy. */
+  transition: filter 0.12s linear, opacity 0.12s linear, transform 0.12s linear;
+}
+
+/* No JS, no split — the heading just reads normally. */
+.focus-line:not(.split) .fw { filter: none; opacity: 1; transform: none; }
+
+
+/* --------------------------------------------------------------------------
+   SCROLL PROGRESS
+   A hairline across the very top. It's the cheapest possible way to tell
+   someone how much page is left.
+   -------------------------------------------------------------------------- */
+
+.progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 60;
+  height: 2px;
+  background-image: var(--sweep);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+.tag {
+  padding: 0.28rem 0.68rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--ink-2);
+}
+
+/* Empty media. It has to look like a decision, not a gap. */
+.slot {
+  display: grid;
+  place-content: center;
+  gap: 0.3rem;
+  height: 100%;
+  min-height: 120px;
+  padding: 1rem;
+  text-align: center;
+  background-image: repeating-linear-gradient(
+    -45deg, var(--panel) 0 1px, transparent 1px 11px);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--ink-3);
+}
+
+.slot b { color: var(--ink-2); font-weight: 500; letter-spacing: 0.08em; }
+
+.rise {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.rise.in { opacity: 1; transform: none; }
+
+
+/* ==========================================================================
+   5. SCENE CANVAS
+   One fixed, full-bleed canvas behind everything, painted by js/scenes.js.
+   It never takes a click and it's decorative, so it's hidden from assistive
+   tech entirely.
+   ========================================================================== */
+
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Not opacity — a canvas at partial opacity still costs a full composite
+     of every frame. The scenes draw at the right strength themselves. */
+}
+
+/* Everything that isn't the scene sits above it. */
+.top, main, .foot { position: relative; z-index: 1; }
+
+/* The one place the page wants pointer events on the scene: the beach hero
+   captures taps and drags for the ripples. It's a transparent catcher, not
+   the canvas itself, so the canvas stays cheap. */
+.catch {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* A finger dragging here should draw a wake, not scroll the page away —
+     but a vertical flick still needs to scroll, so only horizontal drag is
+     claimed. */
+  touch-action: pan-y;
+}
+
+
+/* ==========================================================================
+   6. HOME — BEACH
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  padding-block: clamp(2.5rem, 7vw, 5rem) var(--gap);
+}
+
+.hero-in {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+  /* The hero's own controls must stay clickable above the catcher. */
+  pointer-events: none;
+}
+
+.hero-in > * { pointer-events: auto; }
+
+.hero-btns { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+
+.hint {
+  margin-top: 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.portrait {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s;
+}
+
+.portrait:hover img { transform: scale(1.05); }
+.portrait img.swap { opacity: 0; }
+
+/* Tints an image the site doesn't control into the page's palette. */
+.portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--key) 25%, transparent),
+    color-mix(in srgb, var(--key-2) 30%, transparent));
+  mix-blend-mode: overlay;
+  transition: opacity 0.6s;
+}
+
+.portrait:hover::after { opacity: 0.2; }
+
+.portrait-btn {
+  position: absolute;
+  right: 0.85rem;
+  bottom: 0.85rem;
+  padding: 0.5rem 0.95rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--ground) 70%, transparent);
+  backdrop-filter: blur(8px);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.portrait-btn:hover { border-color: var(--key); color: var(--key); }
+
+/* --- The five worlds, as a menu --- */
+
+.worlds {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.9rem;
+}
+
+.world-card {
+  display: block;
+  padding: 1.4rem 1.3rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background-color: var(--panel);
+  text-decoration: none;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.3s, background-color 0.3s;
+}
+
+.world-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--key);
+  background-color: color-mix(in srgb, var(--key) 8%, transparent);
+}
+
+/* Each card previews the palette of the page it leads to, so the menu is
+   also a map of the five worlds. */
+.world-swatch {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 0.9rem;
+}
+
+.world-swatch span {
+  width: 22px;
+  height: 5px;
+  border-radius: 3px;
+}
+
+.world-name {
+  font-family: var(--display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.world-sub {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 0.35rem;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
+.fact { padding: 1.4rem 1.3rem; }
+
+.fact-k {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.6rem;
+}
+
+.fact-v { font-family: var(--display); font-size: 1.05rem; font-weight: 500; }
+.fact-s { font-size: 0.86rem; color: var(--ink-2); margin-top: 0.3rem; }
+
+
+/* ==========================================================================
+   7. PROJECTS — GALAXY
+   Cards lean toward the pointer and a highlight tracks across them.
+   ========================================================================== */
+
+.works {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.2rem;
+}
+
+/* Perspective on the wrapper, so each card tilts in its own space rather
+   than sharing one vanishing point. */
+.work { perspective: 1000px; }
+
+.work-in {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background-color: var(--panel);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.3s, box-shadow 0.5s;
+  will-change: transform;
+}
+
+.work-in:hover {
+  border-color: color-mix(in srgb, var(--key) 55%, transparent);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+.work-in::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%),
+              color-mix(in srgb, var(--key) 18%, transparent), transparent 45%);
+  transition: opacity 0.3s;
+}
+
+.work-in:hover::after { opacity: 1; }
+
+.work-shot { aspect-ratio: 16 / 10; border-bottom: 1px solid var(--line); overflow: hidden; }
+.work-shot img { width: 100%; height: 100%; object-fit: cover; }
+
+.work-body { flex: 1; display: flex; flex-direction: column; gap: 0.85rem; padding: 1.3rem; }
+
+.work-top { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.work-name { font-size: 1.2rem; }
+
+.work-year {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.work-text { flex: 1; font-size: 0.9rem; color: var(--ink-2); }
+.work-links { display: flex; flex-wrap: wrap; gap: 1.1rem; }
+
+.work-link {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.work-link:hover { border-bottom-color: var(--key); }
+
+
+/* ==========================================================================
+   8. HOBBIES — BLOSSOM
+   A plain, roomy list. The page's life is in the falling petals behind it,
+   so the content stays calm — and it never gets cramped on a phone, which
+   is exactly what the fanned version got wrong.
+   ========================================================================== */
+
+.things { display: grid; gap: 0.9rem; }
+
+.thing {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1.5rem 1.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background-color: var(--panel);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: border-color 0.3s, background-color 0.3s, transform 0.3s;
+}
+
+.thing:hover,
+.thing[aria-expanded="true"] {
+  border-color: color-mix(in srgb, var(--key) 50%, transparent);
+  background-color: color-mix(in srgb, var(--key) 7%, transparent);
+}
+
+.thing:hover { transform: translateX(5px); }
+
+.thing-no {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--key);
+}
+
+.thing-name { font-family: var(--display); font-size: clamp(1.15rem, 3vw, 1.5rem); font-weight: 700; }
+.thing-when { font-family: var(--mono); font-size: 0.66rem; color: var(--ink-3); margin-top: 0.2rem; }
+
+/* The open/close mark: a plus that becomes a minus. */
+.thing-mark { position: relative; width: 14px; height: 14px; flex: none; }
+
+.thing-mark::before,
+.thing-mark::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 1.5px;
+  border-radius: 2px;
+  background-color: var(--key);
+}
+
+.thing-mark::after { transform: rotate(90deg); transition: transform 0.35s; }
+.thing[aria-expanded="true"] .thing-mark::after { transform: rotate(0deg); }
+
+/* The panel that opens. Measured by JS, so long text is never cut off. */
+.thing-more { max-height: 0; overflow: hidden; transition: max-height 0.45s ease; }
+
+.thing-more-in {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  gap: 1.5rem;
+  padding: 0 1.6rem 1.6rem;
+}
+
+.thing-more-in p { grid-column: 2; max-width: 56ch; color: var(--ink-2); font-size: 0.92rem; }
+
+
+/* ==========================================================================
+   9. GALLERY — FOREST
+   Plates dim until the pointer comes near, like something moving a lamp
+   through the trees.
+   ========================================================================== */
+
+.plates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.9rem;
+}
+
+.plate {
+  /* --near: 0 far from the pointer, 1 directly under it. Everything here
+     is driven by that one number, written by JS. */
+  --near: 0;
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+  background-color: var(--panel);
+
+  transform: scale(calc(1 + var(--near) * 0.05));
+  opacity: calc(0.5 + var(--near) * 0.5);
+  border-color: color-mix(in srgb, var(--key) calc(var(--near) * 65%), var(--line));
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+              opacity 0.4s, border-color 0.4s;
+  will-change: transform;
+}
+
+/* Three shapes on a loop. A wall of identical rectangles is what makes
+   most photo grids forgettable. */
+.plate-media { aspect-ratio: 4 / 5; }
+.plate:nth-child(3n + 2) .plate-media { aspect-ratio: 4 / 3; }
+.plate:nth-child(3n + 3) .plate-media { aspect-ratio: 1 / 1; }
+
+.plate-media img { width: 100%; height: 100%; object-fit: cover; }
+
+.plate-cap {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding: 0.8rem 1rem 0.95rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--ink-2);
+}
+
+.plate-no { color: var(--key); font-variant-numeric: tabular-nums; }
+
+
+/* ==========================================================================
+   10. CONTACT — SNOW
+   ========================================================================== */
+
+.mail-big {
+  display: inline-block;
+  margin-top: 1rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 6vw, 3.6rem);
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+  color: var(--ink);
+  text-decoration: none;
+  /* An address is one unbroken word; without this it pushes the page
+     sideways on a phone instead of wrapping. */
+  overflow-wrap: break-word;
+  transition: color 0.25s;
+}
+
+.mail-big:hover { color: var(--key); }
+.mail-big .at { color: var(--key); }
+
+.ways {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem;
+  margin-top: 2.5rem;
+}
+
+.way {
+  display: block;
+  padding: 1.3rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background-color: var(--panel);
+  text-decoration: none;
+  transition: border-color 0.3s, background-color 0.3s, transform 0.3s;
+}
+
+.way:hover {
+  border-color: var(--key);
+  background-color: color-mix(in srgb, var(--key) 8%, transparent);
+  transform: translateY(-4px);
+}
+
+.way-k {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 0.45rem;
+}
+
+.way-v {
+  font-family: var(--display);
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================================
+   11. RESPONSIVE
+   The last build was cramped on a phone. The fixes: one column earlier,
+   bigger touch targets, and nothing overlapping anything else.
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .hero-in { grid-template-columns: 1fr; }
+
+  /* Writing first — a portrait at the top pushes everything below the fold. */
+  .hero-copy { order: 1; }
+  .portrait  { order: 2; max-width: 360px; }
+}
+
+@media (max-width: 760px) {
+  :root { --gap: 3.25rem; }
+
+  .burger { display: flex; }
+  .world  { display: none; }
+
+  .top-in { flex-wrap: wrap; }
+  .nav { order: 3; flex-basis: 100%; margin-left: 0; }
+
+  .nav-list {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.15rem;
+    padding-bottom: 0.7rem;
+  }
+
+  .nav-list.open { display: flex; }
+
+  /* Full-width rows with real height — a thumb needs 44px, not 30. */
+  .nav-a { padding: 0.8rem 0.9rem; border-radius: var(--r-sm); }
+
+  .foot-in { flex-direction: column; align-items: flex-start; }
+
+  /* Hobbies rows: the number moves above the name instead of squeezing a
+     three-column grid into 320px. */
+  .thing {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.4rem 1rem;
+    padding: 1.3rem 1.2rem;
+  }
+
+  .thing-no { grid-column: 1; grid-row: 1; }
+  .thing-text { grid-column: 1; grid-row: 2; }
+  .thing-mark { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+
+  .thing:hover { transform: none; }
+
+  .thing-more-in { grid-template-columns: minmax(0, 1fr); padding-inline: 1.2rem; }
+  .thing-more-in p { grid-column: 1; }
+}
+
+@media (max-width: 420px) {
+  .worlds, .facts, .ways, .plates { grid-template-columns: 1fr; }
+}
+
+
+/* ==========================================================================
+   12. MOTION & ACCESSIBILITY
+   ========================================================================== */
+
+:focus-visible {
+  outline: 2px solid var(--key);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.skip { position: absolute; left: -9999px; }
+
+.skip:focus {
+  left: 1rem;
+  top: 1rem;
+  z-index: 99;
+  padding: 0.7rem 1.1rem;
+  border-radius: var(--r-sm);
+  background-image: var(--sweep);
+  color: var(--on-key);
+  text-decoration: none;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Everything still arrives and still reads — it just stops moving. The
+   canvas is removed outright by scenes.js. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .rise { opacity: 1; transform: none; }
+}

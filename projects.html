@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Projects — Dylan</title>
+  <meta name="description" content="An Arduino gesture-controlled MP3 player, a Java notepad, and this site.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="w-galaxy" data-scene="galaxy">
+
+<a class="skip" href="#main">Skip to content</a>
+<canvas class="scene" aria-hidden="true"></canvas>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="mark" href="index.html"><span class="mark-dot" aria-hidden="true"></span> Dylan</a>
+
+    <button class="burger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav" aria-label="Main">
+      <ul class="nav-list">
+        <li><a class="nav-a" href="index.html">Home</a></li>
+        <li><a class="nav-a" href="projects.html" aria-current="page">Projects</a></li>
+        <li><a class="nav-a" href="hobbies.html">Hobbies</a></li>
+        <li><a class="nav-a" href="gallery.html">Gallery</a></li>
+        <li><a class="nav-a" href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+
+    <p class="world">Galaxy</p>
+  </div>
+</header>
+
+
+<main id="main">
+
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow">Selected work</p>
+      <h1 class="h1">Things I <span class="glow">finished</span></h1>
+      <p class="lede">
+        Coursework, side projects, and one build I made to find out whether
+        I could. Move the cursor and the stars behind will join up; the
+        cards lean toward you as you pass them.
+      </p>
+
+      <div class="works rise" style="margin-top: 2.75rem;">
+
+        <!-- ---------- Arduino ---------- -->
+        <article class="work">
+          <div class="work-in">
+            <div class="work-shot">
+              <!-- YouTube's own thumbnail for the build video, so this shows
+                   something real right away. Swap for a local file in
+                   assets/ if you'd rather the page not call out. -->
+              <img src="https://img.youtube.com/vi/p075roPKLVo/hqdefault.jpg"
+                   alt="The Arduino MP3 player on a breadboard" loading="lazy">
+            </div>
+            <div class="work-body">
+              <div class="work-top">
+                <h2 class="work-name">Gesture MP3 Player</h2>
+                <!-- REPLACE if the year is wrong. -->
+                <span class="work-year">2025</span>
+              </div>
+              <p class="work-text">
+                An MP3 player on an Arduino Uno, with a DFPlayer Mini pulling
+                tracks off a microSD card. Buttons handle the obvious
+                controls and an ultrasonic sensor handles the rest — wave a
+                hand to play, pause or skip — with an LED flashing along to
+                whatever's going. Built for the IoT module, and wired up in
+                Tinkercad first, because breadboarding blind is a bad time.
+              </p>
+              <ul class="tags">
+                <li class="tag">Arduino</li><li class="tag">C++</li>
+                <li class="tag">DFPlayer</li><li class="tag">Ultrasonic</li>
+              </ul>
+              <div class="work-links">
+                <a class="work-link" href="https://youtu.be/p075roPKLVo" target="_blank" rel="noopener">The build <span class="arw" aria-hidden="true">&#8594;</span></a>
+                <a class="work-link" href="https://youtu.be/Ldol8eW05cQ" target="_blank" rel="noopener">Tinkercad sim <span class="arw" aria-hidden="true">&#8594;</span></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ---------- Notepad ---------- -->
+        <article class="work">
+          <div class="work-in">
+            <div class="work-shot">
+              <!-- TO ADD A SCREENSHOT: drop it in assets/ and replace this
+                   whole <div class="slot"> with an <img>. -->
+              <div class="slot"><b>assets/notepad.jpg</b><span>screenshot of the editor</span></div>
+            </div>
+            <div class="work-body">
+              <div class="work-top">
+                <h2 class="work-name">Notepad</h2>
+                <span class="work-year">2025</span>
+              </div>
+              <p class="work-text">
+                A text editor written in Java to find out how much of one I
+                could put together from scratch — open, edit, save, the
+                usual. Built in NetBeans with an Ant build and packaged as a
+                Windows executable, so it runs without anyone installing a
+                toolchain first. Finished 30 October 2025.
+              </p>
+              <ul class="tags">
+                <li class="tag">Java</li><li class="tag">Swing</li>
+                <li class="tag">Ant</li><li class="tag">NetBeans</li>
+              </ul>
+              <div class="work-links">
+                <a class="work-link" href="https://github.com/DylanLim20/Notepad" target="_blank" rel="noopener">GitHub <span class="arw" aria-hidden="true">&#8594;</span></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ---------- This site ---------- -->
+        <article class="work">
+          <div class="work-in">
+            <div class="work-shot">
+              <div class="slot"><b>assets/portfolio.jpg</b><span>screenshot of this page</span></div>
+            </div>
+            <div class="work-body">
+              <div class="work-top">
+                <h2 class="work-name">This Portfolio</h2>
+                <span class="work-year">2026</span>
+              </div>
+              <p class="work-text">
+                Five pages, five worlds, each with a canvas background that
+                reacts to the pointer — ripples, constellations, petals,
+                fireflies and snow. Built with HTML, CSS and JavaScript, no
+                frameworks and no build step, so I'd learn layout and canvas
+                properly instead of leaning on a library.
+              </p>
+              <ul class="tags">
+                <li class="tag">HTML</li><li class="tag">CSS</li>
+                <li class="tag">JavaScript</li><li class="tag">Canvas</li>
+              </ul>
+              <div class="work-links">
+                <!-- REPLACE with the real repo and live URL. -->
+                <a class="work-link" href="#" target="_blank" rel="noopener">GitHub <span class="arw" aria-hidden="true">&#8594;</span></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ---------- Placeholder ----------
+             Copy any <article class="work"> above to add another. -->
+        <article class="work">
+          <div class="work-in">
+            <div class="work-shot">
+              <div class="slot"><b>assets/project-4.jpg</b><span>next one goes here</span></div>
+            </div>
+            <div class="work-body">
+              <div class="work-top">
+                <h2 class="work-name">Next Project</h2>
+                <span class="work-year">2026</span>
+              </div>
+              <p class="work-text">
+                <!-- REPLACE: what it does, who it's for, and the part that
+                     was genuinely hard to get working. -->
+                One or two sentences on what it does, who it's for, and the
+                part that was genuinely hard to get working.
+              </p>
+              <ul class="tags"><li class="tag">Python</li></ul>
+              <div class="work-links">
+                <a class="work-link" href="#" target="_blank" rel="noopener">GitHub <span class="arw" aria-hidden="true">&#8594;</span></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Closing panel: gives the page a way onward, and a second place for
+       the scroll-focus line to land. -->
+  <section class="section" style="padding-top: 0;" aria-labelledby="next-h">
+    <div class="wrap">
+      <div class="card rise" style="padding: clamp(1.6rem, 5vw, 2.75rem);">
+        <p class="eyebrow">Next</p>
+        <h2 class="h2 focus-line" id="next-h">Same instinct, fewer semicolons.</h2>
+        <p class="lede">
+          The habit behind all of this lives on the hobbies page — six things
+          I've repeated until they looked easy.
+        </p>
+        <div class="hero-btns">
+          <a class="btn btn-fill" href="hobbies.html">Off the keyboard <span class="arw" aria-hidden="true">&#8594;</span></a>
+          <a class="btn btn-line" href="contact.html">Get in touch <span class="arw" aria-hidden="true">&#8594;</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>
+      <p class="foot-k">Get in touch</p>
+      <a class="foot-mail" href="mailto:dryunkang@gmail.com">dryunkang@gmail.com</a>
+    </div>
+    <ul class="socials">
+      <li><a class="social" data-magnet="7" href="https://github.com/DylanLim20" aria-label="GitHub" target="_blank" rel="noopener">GH</a></li>
+      <li><a class="social" data-magnet="7" href="https://www.linkedin.com/in/ryun-kang-lim-a1902739a" aria-label="LinkedIn" target="_blank" rel="noopener">LI</a></li>
+      <li><a class="social" data-magnet="7" href="https://www.instagram.com/potatodyl/" aria-label="Instagram" target="_blank" rel="noopener">IG</a></li>
+    </ul>
+    <p class="foot-note">© 2026 Dylan. Built with HTML, CSS and JavaScript.</p>
+  </div>
+</footer>
+
+<script src="js/scenes.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

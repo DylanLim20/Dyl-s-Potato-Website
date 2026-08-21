@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Test — Editorial Scroll Study</title>
+  <meta name="description" content="A scroll and cursor study: pinned hero, velocity marquee, horizontal track, theme flip.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/test.css">
+</head>
+
+<!--
+  This page does not load css/style.css. It is a self-contained study of the
+  scroll and pointer vocabulary those big one-page athlete sites use, so it
+  keeps its own skin and its own class prefix (.t-) and cannot disturb the
+  five real pages.
+
+  Structure mirrors the reference architecture:
+    hero        sticky-track, scrubbed apart over two viewports
+    marquee     duplicated rows, scroll velocity drives speed and skew
+    statement   quote plus captioned collage
+    track       horizontal rail pinned, driven by vertical scroll
+    split       full-height halves, palette inverts on the second
+    archive     dense tile wall with year separators
+    band        centred call to action
+    stack       bordered cell grid
+    socials     large tap targets
+    footer      link columns plus an oversized clipped wordmark
+-->
+<body class="t-page">
+
+<!-- Load wipe. Stands in for the reference Rive transition: it clears
+     upward once fonts resolve, so the display face never swaps in view. -->
+<div class="t-wipe" aria-hidden="true">
+  <span class="t-wipe-n">Dylan</span>
+</div>
+
+<!-- Cursor. Decorative and never clickable; see js/test.js section 2. -->
+<div class="t-cursor" aria-hidden="true">
+  <div class="t-ring"><span class="t-ring-l">VIEW</span></div>
+  <div class="t-dot"></div>
+</div>
+
+<!-- Right-edge scroll progress, blend-difference so it reads on both skins. -->
+<div class="t-prog" aria-hidden="true"><div class="t-prog-b"></div></div>
+
+<header class="t-nav">
+  <a class="t-nav-m" href="index.html" data-cursor="link">Dylan<br>Ong</a>
+
+  <div class="t-nav-r">
+    <a class="t-pill" href="assets/resume.pdf" data-cursor="link" data-magnet>Resume</a>
+    <button class="t-burger" type="button" aria-label="Menu" data-cursor="link" data-magnet>
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ====================================================================
+       HERO
+       Outer track is 200vh, inner pane sticks at 100vh. The second
+       viewport of scroll scrubs the hero apart rather than pushing it off.
+       ==================================================================== -->
+  <section class="t-s t-hero-track">
+    <div class="t-hero">
+      <div class="t-hero-bg" aria-hidden="true"></div>
+
+      <figure class="t-hero-fig" data-cursor="view" data-cursor-label="HELLO">
+        <img src="assets/Dylan1.jpg" alt="Dylan">
+      </figure>
+
+      <h1 class="t-hero-name">
+        <span class="t-h1 t-line"><span class="t-line-i">Dylan</span></span>
+        <span class="t-h1 t-line"><span class="t-line-i">Ong</span></span>
+      </h1>
+
+      <p class="t-lab t-hero-sub">2026 &mdash; Developer &amp; Cardist</p>
+
+      <div class="t-card">
+        <span class="t-lab">Next up</span>
+        <hr class="t-rule">
+        <span class="t-card-h">Final<br>Year</span>
+        <span class="t-lab">APU &mdash; ICT</span>
+      </div>
+
+      <span class="t-lab t-scroll-cue">Scroll</span>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       MARQUEE
+       Each row holds two identical sets. JS translates the row and wraps by
+       one set width plus one gap, and scroll velocity adds speed and skew.
+       ==================================================================== -->
+  <section class="t-s t-marquee" aria-hidden="true">
+    <div class="t-mq-row" data-dir="left" data-speed="0.7">
+      <span class="t-mq-set">
+        <span class="t-mq-i">Python</span>
+        <span class="t-mq-i is-out">Java</span>
+        <span class="t-mq-i">Front end</span>
+        <span class="t-mq-i is-out">Cardistry</span>
+      </span>
+      <span class="t-mq-set">
+        <span class="t-mq-i">Python</span>
+        <span class="t-mq-i is-out">Java</span>
+        <span class="t-mq-i">Front end</span>
+        <span class="t-mq-i is-out">Cardistry</span>
+      </span>
+    </div>
+
+    <div class="t-mq-row" data-dir="right" data-speed="0.45">
+      <span class="t-mq-set">
+        <span class="t-mq-i is-out">Diabolo</span>
+        <span class="t-mq-i">Interfaces</span>
+        <span class="t-mq-i is-out">Motion</span>
+        <span class="t-mq-i">Builds</span>
+      </span>
+      <span class="t-mq-set">
+        <span class="t-mq-i is-out">Diabolo</span>
+        <span class="t-mq-i">Interfaces</span>
+        <span class="t-mq-i is-out">Motion</span>
+        <span class="t-mq-i">Builds</span>
+      </span>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       STATEMENT
+       ==================================================================== -->
+  <section class="t-s">
+    <div class="t-wrap t-state">
+      <div data-reveal>
+        <span class="t-lab">A note</span>
+        <p class="t-quote" style="margin-top:1.2rem">
+          I build things that <em>move</em> &mdash; interfaces, card flourishes,
+          the odd diabolo trick. Same instinct, different medium.
+        </p>
+      </div>
+
+      <div class="t-collage" data-reveal>
+        <a class="t-tile" href="gallery.html" data-cursor="view">
+          <img src="assets/Dylan2.jpg" alt="Portrait">
+          <span class="t-lab t-tile-c">KL, 2025</span>
+        </a>
+        <div class="t-tile is-off" data-cursor="view">
+          <div class="t-ph"></div>
+          <span class="t-lab t-tile-c">Desk, 2025</span>
+        </div>
+        <div class="t-tile is-off" data-cursor="view">
+          <div class="t-ph"></div>
+          <span class="t-lab t-tile-c">Cards, 2024</span>
+        </div>
+        <div class="t-tile" data-cursor="view">
+          <div class="t-ph"></div>
+          <span class="t-lab t-tile-c">Campus, 2024</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       TRACK
+       The load-bearing trick: vertical wheel input, horizontal motion, no
+       nested scroll container. Spacer height is set from the measured rail
+       width in JS. On touch and reduced-motion it degrades to a swipe rail.
+       ==================================================================== -->
+  <section class="t-s t-track">
+    <div class="t-track-spacer">
+      <div class="t-track-pin">
+        <div class="t-track-head">
+          <h2 class="t-h3">Selected work</h2>
+          <span class="t-lab">Drag or scroll &mdash; 06</span>
+        </div>
+
+        <div class="t-rail" data-cursor="drag">
+          <div class="t-tile"><div class="t-ph"></div><span class="t-lab t-tile-c">Scene engine &mdash; 2025</span></div>
+          <div class="t-tile is-tall"><div class="t-ph"></div><span class="t-lab t-tile-c">Portfolio &mdash; 2025</span></div>
+          <div class="t-tile"><div class="t-ph"></div><span class="t-lab t-tile-c">Java coursework &mdash; 2024</span></div>
+          <div class="t-tile is-tall"><div class="t-ph"></div><span class="t-lab t-tile-c">Python tooling &mdash; 2024</span></div>
+          <div class="t-tile"><div class="t-ph"></div><span class="t-lab t-tile-c">Card edits &mdash; 2024</span></div>
+          <div class="t-tile is-tall"><div class="t-ph"></div><span class="t-lab t-tile-c">Diabolo reel &mdash; 2023</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SPLIT
+       The second half carries data-theme-dark. When it crosses the middle
+       of the viewport JS adds .is-dark to body and the palette inverts.
+       ==================================================================== -->
+  <section class="t-s t-split">
+    <div class="t-half">
+      <div class="t-half-in" data-reveal>
+        <div class="t-stack">
+          <span>On</span><span>Screen</span>
+        </div>
+        <p>Code, interfaces and the projects that shipped.</p>
+        <a class="t-link" href="projects.html" data-cursor="link" data-magnet>View projects</a>
+      </div>
+    </div>
+
+    <div class="t-half" data-theme-dark>
+      <div class="t-half-in" data-reveal>
+        <div class="t-stack">
+          <span>Off</span><span>Screen</span>
+        </div>
+        <p>Cardistry, diabolo, and everything practised on the floor instead of a keyboard.</p>
+        <a class="t-link" href="hobbies.html" data-cursor="link" data-magnet>View hobbies</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       ARCHIVE
+       Dense tile wall with year separators in the same flow.
+       ==================================================================== -->
+  <section class="t-s t-arch">
+    <div class="t-wrap">
+      <div class="t-arch-head" data-reveal>
+        <span class="t-lab">Archive</span>
+        <h2 class="t-h2">Deck<br>Shelf</h2>
+        <p>Every deck earns its place by how it fans, how it holds a spread, and how it looks mid-flourish.</p>
+      </div>
+
+      <div class="t-grid" data-reveal>
+        <div class="t-deck is-year"><span class="t-lab">2025</span></div>
+        <a class="t-deck" href="hobbies.html" data-cursor="link"><span class="t-deck-n">Virtuoso</span><span class="t-lab t-deck-y">2025</span></a>
+        <a class="t-deck" href="hobbies.html" data-cursor="link"><span class="t-deck-n">Mono</span><span class="t-lab t-deck-y">2025</span></a>
+        <a class="t-deck" href="hobbies.html" data-cursor="link"><span class="t-deck-n">Orbit</span><span class="t-lab t-deck-y">2025</span></a>
+        <div class="t-deck is-year"><span class="t-lab">2024</span></div>
+        <a class="t-deck" href="hobbies.html" data-cursor="link"><span class="t-deck-n">Fontaine</span><span class="t-lab t-deck-y">2024</span></a>
+        <a class="t-deck" href="hobbies.html" data-cursor="link"><span class="t-deck-n">Tally</span><span class="t-lab t-deck-y">2024</span></a>
+        <a class="t-deck" href="hobbies.html" data-cursor="link"><span class="t-deck-n">Split</span><span class="t-lab t-deck-y">2024</span></a>
+        <div class="t-deck is-year"><span class="t-lab">2023</span></div>
+        <a class="t-deck" href="hobbies.html" data-cursor="link"><span class="t-deck-n">Bicycle</span><span class="t-lab t-deck-y">2023</span></a>
+        <a class="t-deck" href="hobbies.html" data-cursor="link"><span class="t-deck-n">Prism</span><span class="t-lab t-deck-y">2023</span></a>
+        <a class="t-deck" href="hobbies.html" data-cursor="link"><span class="t-deck-n">First</span><span class="t-lab t-deck-y">2023</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       BAND
+       ==================================================================== -->
+  <section class="t-s">
+    <div class="t-wrap t-band" data-reveal>
+      <span class="t-lab">Currently</span>
+      <h2 class="t-h2">Open to<br>internships</h2>
+      <p style="max-width:42ch">Final-year ICT at Asia Pacific University, looking for a 2026 placement in front-end or software engineering.</p>
+      <a class="t-pill" href="contact.html" data-cursor="link" data-magnet>Get in touch</a>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       STACK
+       ==================================================================== -->
+  <section class="t-s">
+    <div class="t-wrap">
+      <div class="t-arch-head" data-reveal>
+        <span class="t-lab">Tools</span>
+        <h2 class="t-h3">What I build with</h2>
+      </div>
+    </div>
+
+    <div class="t-stackgrid" data-reveal>
+      <div><span class="t-lab">Languages</span><p>Python, Java, JavaScript, SQL</p></div>
+      <div><span class="t-lab">Front end</span><p>HTML, CSS, Canvas, GSAP</p></div>
+      <div><span class="t-lab">Tooling</span><p>Git, VS Code, Figma</p></div>
+      <div><span class="t-lab">Learning</span><p>TypeScript, WebGL, React</p></div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SOCIALS
+       ==================================================================== -->
+  <section class="t-s t-socials">
+    <div class="t-wrap" data-reveal>
+      <span class="t-lab">Elsewhere</span>
+      <h2 class="t-h2" style="margin:0.8rem 0 1.6rem">Say hello</h2>
+
+      <div class="t-soc-row">
+        <a class="t-soc" href="contact.html" data-cursor="link" data-magnet>Email</a>
+        <a class="t-soc" href="contact.html" data-cursor="link" data-magnet>GitHub</a>
+        <a class="t-soc" href="contact.html" data-cursor="link" data-magnet>Instagram</a>
+        <a class="t-soc" href="contact.html" data-cursor="link" data-magnet>YouTube</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ======================================================================
+     FOOTER
+     ====================================================================== -->
+<footer class="t-foot">
+  <div class="t-wrap">
+    <div class="t-foot-top">
+      <div class="t-foot-col">
+        <span class="t-lab">Pages</span>
+        <a href="index.html" data-cursor="link">Home</a>
+        <a href="projects.html" data-cursor="link">Projects</a>
+        <a href="hobbies.html" data-cursor="link">Hobbies</a>
+        <a href="gallery.html" data-cursor="link">Gallery</a>
+        <a href="contact.html" data-cursor="link">Contact</a>
+      </div>
+
+      <div class="t-foot-col">
+        <span class="t-lab">Follow</span>
+        <a href="contact.html" data-cursor="link">GitHub</a>
+        <a href="contact.html" data-cursor="link">Instagram</a>
+        <a href="contact.html" data-cursor="link">YouTube</a>
+      </div>
+
+      <div class="t-foot-col">
+        <span class="t-lab">Enquiries</span>
+        <a href="contact.html" data-cursor="link">Say hello</a>
+        <a href="assets/resume.pdf" data-cursor="link">Resume</a>
+      </div>
+    </div>
+
+    <div class="t-foot-mark">Dylan Ong</div>
+
+    <div class="t-foot-end">
+      <span class="t-lab">&copy; 2026 Dylan Ong</span>
+      <span class="t-lab">Study page &mdash; not linked in nav</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Motion stack, same versions the reference build runs. Deferred, and
+     js/test.js degrades to a plain vertical page if any of it is missing. -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="js/test.js"></script>
+
+</body>
+</html>

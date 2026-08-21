@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Contact — Dylan</title>
+  <meta name="description" content="Email, GitHub, LinkedIn, Instagram and a resume.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="w-snow" data-scene="snow">
+
+<a class="skip" href="#main">Skip to content</a>
+<canvas class="scene" aria-hidden="true"></canvas>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="mark" href="index.html"><span class="mark-dot" aria-hidden="true"></span> Dylan</a>
+
+    <button class="burger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav" aria-label="Main">
+      <ul class="nav-list">
+        <li><a class="nav-a" href="index.html">Home</a></li>
+        <li><a class="nav-a" href="projects.html">Projects</a></li>
+        <li><a class="nav-a" href="hobbies.html">Hobbies</a></li>
+        <li><a class="nav-a" href="gallery.html">Gallery</a></li>
+        <li><a class="nav-a" href="contact.html" aria-current="page">Contact</a></li>
+      </ul>
+    </nav>
+
+    <p class="world">Snow</p>
+  </div>
+</header>
+
+
+<main id="main">
+
+  <!-- ==========================================================
+       No form. A contact form that isn't wired to a sending
+       service swallows messages silently, and every route below
+       is one you already own.
+       ========================================================== -->
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow">Open to internships</p>
+      <h1 class="sr">Contact</h1>
+
+      <a class="mail-big" href="mailto:dryunkang@gmail.com">
+        <!-- An address is one unbroken word to a browser, so <wbr> marks
+             the one place it's allowed to break on a narrow screen. -->
+        dryunkang<span class="at">@</span><wbr>gmail.com
+      </a>
+
+      <p class="lede" style="margin-top: 1.4rem;">
+        That's the whole system. I read everything and reply within a couple
+        of days — sooner if it's about work.
+      </p>
+
+      <div class="ways rise">
+        <a class="way" href="mailto:dryunkang@gmail.com">
+          <p class="way-k">Email</p>
+          <p class="way-v">dryunkang@gmail.com</p>
+        </a>
+
+        <a class="way" href="https://github.com/DylanLim20" target="_blank" rel="noopener">
+          <p class="way-k">GitHub</p>
+          <p class="way-v">DylanLim20</p>
+        </a>
+
+        <a class="way" href="https://www.linkedin.com/in/ryun-kang-lim-a1902739a" target="_blank" rel="noopener">
+          <p class="way-k">LinkedIn</p>
+          <p class="way-v">Ryun Kang Lim</p>
+        </a>
+
+        <a class="way" href="https://www.instagram.com/potatodyl/" target="_blank" rel="noopener">
+          <p class="way-k">Instagram</p>
+          <p class="way-v">@potatodyl</p>
+        </a>
+
+        <a class="way" href="assets/resume.pdf">
+          <p class="way-k">Resume</p>
+          <p class="way-v">Download PDF</p>
+        </a>
+
+        <!-- Not a link: city and country only, never a street address. -->
+        <div class="way">
+          <p class="way-k">Based in</p>
+          <p class="way-v">Penang, Malaysia</p>
+        </div>
+      </div>
+
+      <div class="hero-btns" style="margin-top: 2.5rem;">
+        <a class="btn btn-fill" href="mailto:dryunkang@gmail.com">Write to me <span class="arw" aria-hidden="true">&#8594;</span></a>
+        <a class="btn btn-line" href="assets/resume.pdf">Download resume <span class="arw" aria-hidden="true">&#8594;</span></a>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="section" style="padding-top: 0;">
+    <div class="wrap">
+      <h2 class="h2 focus-line" style="max-width: 18ch;">Still building. Happy to talk about any of it.</h2>
+    </div>
+  </section>
+
+</main>
+
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>
+      <p class="foot-k">Get in touch</p>
+      <a class="foot-mail" href="mailto:dryunkang@gmail.com">dryunkang@gmail.com</a>
+    </div>
+    <ul class="socials">
+      <li><a class="social" data-magnet="7" href="https://github.com/DylanLim20" aria-label="GitHub" target="_blank" rel="noopener">GH</a></li>
+      <li><a class="social" data-magnet="7" href="https://www.linkedin.com/in/ryun-kang-lim-a1902739a" aria-label="LinkedIn" target="_blank" rel="noopener">LI</a></li>
+      <li><a class="social" data-magnet="7" href="https://www.instagram.com/potatodyl/" aria-label="Instagram" target="_blank" rel="noopener">IG</a></li>
+    </ul>
+    <p class="foot-note">© 2026 Dylan. Built with HTML, CSS and JavaScript.</p>
+  </div>
+</footer>
+
+<script src="js/scenes.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
