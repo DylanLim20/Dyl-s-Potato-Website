@@ -14,39 +14,17 @@
   <link rel="stylesheet" href="css/test.css">
 </head>
 
-<!--
-  This page does not load css/style.css. It is a self-contained study of the
-  scroll and pointer vocabulary those big one-page athlete sites use, so it
-  keeps its own skin and its own class prefix (.t-) and cannot disturb the
-  five real pages.
-
-  Structure mirrors the reference architecture:
-    hero        sticky-track, scrubbed apart over two viewports
-    marquee     duplicated rows, scroll velocity drives speed and skew
-    statement   quote plus captioned collage
-    track       horizontal rail pinned, driven by vertical scroll
-    split       full-height halves, palette inverts on the second
-    archive     dense tile wall with year separators
-    band        centred call to action
-    stack       bordered cell grid
-    socials     large tap targets
-    footer      link columns plus an oversized clipped wordmark
--->
 <body class="t-page">
 
-<!-- Load wipe. Stands in for the reference Rive transition: it clears
-     upward once fonts resolve, so the display face never swaps in view. -->
 <div class="t-wipe" aria-hidden="true">
   <span class="t-wipe-n">Dylan</span>
 </div>
 
-<!-- Cursor. Decorative and never clickable; see js/test.js section 2. -->
 <div class="t-cursor" aria-hidden="true">
   <div class="t-ring"><span class="t-ring-l">VIEW</span></div>
   <div class="t-dot"></div>
 </div>
 
-<!-- Right-edge scroll progress, blend-difference so it reads on both skins. -->
 <div class="t-prog" aria-hidden="true"><div class="t-prog-b"></div></div>
 
 <header class="t-nav">
@@ -62,11 +40,6 @@
 
 <main>
 
-  <!-- ====================================================================
-       HERO
-       Outer track is 200vh, inner pane sticks at 100vh. The second
-       viewport of scroll scrubs the hero apart rather than pushing it off.
-       ==================================================================== -->
   <section class="t-s t-hero-track">
     <div class="t-hero">
       <div class="t-hero-bg" aria-hidden="true"></div>
@@ -93,11 +66,6 @@
     </div>
   </section>
 
-  <!-- ====================================================================
-       MARQUEE
-       Each row holds two identical sets. JS translates the row and wraps by
-       one set width plus one gap, and scroll velocity adds speed and skew.
-       ==================================================================== -->
   <section class="t-s t-marquee" aria-hidden="true">
     <div class="t-mq-row" data-dir="left" data-speed="0.7">
       <span class="t-mq-set">
@@ -130,9 +98,6 @@
     </div>
   </section>
 
-  <!-- ====================================================================
-       STATEMENT
-       ==================================================================== -->
   <section class="t-s">
     <div class="t-wrap t-state">
       <div data-reveal>
@@ -164,12 +129,6 @@
     </div>
   </section>
 
-  <!-- ====================================================================
-       TRACK
-       The load-bearing trick: vertical wheel input, horizontal motion, no
-       nested scroll container. Spacer height is set from the measured rail
-       width in JS. On touch and reduced-motion it degrades to a swipe rail.
-       ==================================================================== -->
   <section class="t-s t-track">
     <div class="t-track-spacer">
       <div class="t-track-pin">
@@ -190,11 +149,6 @@
     </div>
   </section>
 
-  <!-- ====================================================================
-       SPLIT
-       The second half carries data-theme-dark. When it crosses the middle
-       of the viewport JS adds .is-dark to body and the palette inverts.
-       ==================================================================== -->
   <section class="t-s t-split">
     <div class="t-half">
       <div class="t-half-in" data-reveal>
@@ -217,10 +171,6 @@
     </div>
   </section>
 
-  <!-- ====================================================================
-       ARCHIVE
-       Dense tile wall with year separators in the same flow.
-       ==================================================================== -->
   <section class="t-s t-arch">
     <div class="t-wrap">
       <div class="t-arch-head" data-reveal>
@@ -246,9 +196,6 @@
     </div>
   </section>
 
-  <!-- ====================================================================
-       BAND
-       ==================================================================== -->
   <section class="t-s">
     <div class="t-wrap t-band" data-reveal>
       <span class="t-lab">Currently</span>
@@ -258,9 +205,6 @@
     </div>
   </section>
 
-  <!-- ====================================================================
-       STACK
-       ==================================================================== -->
   <section class="t-s">
     <div class="t-wrap">
       <div class="t-arch-head" data-reveal>
@@ -277,9 +221,6 @@
     </div>
   </section>
 
-  <!-- ====================================================================
-       SOCIALS
-       ==================================================================== -->
   <section class="t-s t-socials">
     <div class="t-wrap" data-reveal>
       <span class="t-lab">Elsewhere</span>
@@ -296,9 +237,6 @@
 
 </main>
 
-<!-- ======================================================================
-     FOOTER
-     ====================================================================== -->
 <footer class="t-foot">
   <div class="t-wrap">
     <div class="t-foot-top">
@@ -334,8 +272,6 @@
   </div>
 </footer>
 
-<!-- Motion stack, same versions the reference build runs. Deferred, and
-     js/test.js degrades to a plain vertical page if any of it is missing. -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>

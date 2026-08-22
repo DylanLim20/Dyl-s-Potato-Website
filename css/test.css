@@ -1,38 +1,6 @@
-/* ==========================================================================
-   TEST — EDITORIAL SCROLL PAGE
-   A study rebuild in the idiom of the big athlete/agency one-pagers:
-   pinned hero, velocity-skewed marquee, a horizontal track that eats
-   vertical scroll, a light-to-dark theme flip mid-page, then a tile
-   archive and a heavy footer.
-
-   Same bones as the rest of the site, its own skin. Nothing here leaks
-   into css/style.css.
-
-   CONTENTS
-   1. Palette & tokens        7. Track (horizontal pin)
-   2. Base & type             8. Split (theme flip)
-   3. Cursor & indicators     9. Archive
-   4. Chrome (nav, footer)   10. Store / stack / socials
-   5. Hero                   11. Footer
-   6. Marquee & statement    12. Responsive & motion
-   ========================================================================== */
-
-
-/* ==========================================================================
-   1. PALETTE & TOKENS
-   Two skins on one set of names. .is-dark is toggled by js/test.js when
-   the split section pins, so every section below reads the same vars.
-   ========================================================================== */
-
 .t-page {
-  --bone:    #EDEAE3;   /* page ground */
-  --bone-2:  #E3DFD6;   /* recessed panels */
-  --ink:     #16181A;   /* primary text */
-  --ink-2:   #5C6167;   /* secondary text */
-  --ink-3:   #9AA0A6;   /* labels, meta */
-  --line:    rgba(22, 24, 26, 0.14);
-  --key:     #38E1C4;   /* accent */
-  --on-key:  #04171A;
+  --bone:    #EDEAE3;   --bone-2:  #E3DFD6;   --ink:     #16181A;   --ink-2:   #5C6167;   --ink-3:   #9AA0A6;   --line:    rgba(22, 24, 26, 0.14);
+  --key:     #38E1C4;   --on-key:  #04171A;
 
   --display: "Anton", "Space Grotesk", Impact, sans-serif;
   --body:    "Inter", -apple-system, Arial, sans-serif;
@@ -41,7 +9,6 @@
   --pad:   clamp(1.15rem, 4vw, 2.5rem);
   --shell: 1440px;
 
-  /* Display scale. Clamped so the big type never wraps at the low end. */
   --d-1: clamp(3.5rem, 16.5vw, 15rem);
   --d-2: clamp(2.4rem, 8vw, 7rem);
   --d-3: clamp(1.6rem, 4vw, 3.2rem);
@@ -53,7 +20,6 @@
   transition: background-color 0.6s var(--ease), color 0.6s var(--ease);
 }
 
-/* --- The flip. Same names, inverted values. --- */
 .t-page.is-dark {
   --bone:   #101214;
   --bone-2: #181B1E;
@@ -62,11 +28,6 @@
   --ink-3:  #6B7278;
   --line:   rgba(242, 240, 235, 0.16);
 }
-
-
-/* ==========================================================================
-   2. BASE & TYPE
-   ========================================================================== */
 
 .t-page * { box-sizing: border-box; }
 
@@ -77,8 +38,6 @@
   overflow-x: clip;
 }
 
-/* Lenis drives scroll from JS, so the native scrollbar goes away and the
-   html element must not smooth-scroll on its own. */
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped { overflow: hidden; }
@@ -100,7 +59,6 @@ html.lenis, html.lenis body { height: auto; }
 
 .t-page p { margin: 0; line-height: 1.55; color: var(--ink-2); }
 
-/* Meta label — the small mono all-caps tag used all over the reference. */
 .t-lab {
   font-family: var(--mono);
   font-size: 0.66rem;
@@ -113,28 +71,8 @@ html.lenis, html.lenis body { height: auto; }
 .t-wrap  { width: 100%; max-width: var(--shell); margin: 0 auto; padding: 0 var(--pad); }
 .t-rule  { height: 1px; background: var(--line); border: 0; margin: 0; }
 
-/* Split-line reveal. js/test.js wraps each line in .t-line > .t-line-i and
-   animates the inner span up from below the mask. */
 .t-line   { display: block; overflow: hidden; }
 .t-line-i { display: block; will-change: transform; }
-
-
-/* ==========================================================================
-   3. CURSOR & INDICATORS
-   The pointer is three separate things layered together:
-
-     .t-dot    a small hard dot that tracks the mouse 1:1, no easing.
-               This is the truth — it never lags, so clicks feel exact.
-     .t-ring   a larger ring that eases toward the dot. The lag is the
-               whole effect; it reads as weight.
-     .t-ring-l a label that lives inside the ring for VIEW / DRAG states.
-
-   Both layers use mix-blend-mode: difference, so they invert against
-   whatever is behind them and never need to know the theme. That is the
-   same trick the reference uses for its scroll bar.
-
-   Everything is pointer-events: none so the cursor can never eat a click.
-   ========================================================================== */
 
 .t-cursor {
   position: fixed;
@@ -142,8 +80,6 @@ html.lenis, html.lenis body { height: auto; }
   z-index: 9999;
   pointer-events: none;
   mix-blend-mode: difference;
-  /* Hidden until the first real mousemove, so it does not sit in the
-     top-left corner on load. */
   opacity: 0;
   transition: opacity 0.25s linear;
 }
@@ -155,7 +91,6 @@ html.lenis, html.lenis body { height: auto; }
   top: 0;
   left: 0;
   border-radius: 50%;
-  /* -50% centres it on the point; JS only ever writes translate3d. */
   will-change: transform;
 }
 
@@ -186,14 +121,9 @@ html.lenis, html.lenis body { height: auto; }
   white-space: nowrap;
 }
 
-/* --- States. JS sets data-state on .t-cursor; CSS owns the look, so a
-       new state is a rule here and a data-cursor attribute in the HTML. --- */
-
-/* over a link or button: ring swells, dot fades into it */
 .t-cursor[data-state="link"] .t-ring { border-width: 1.5px; }
 .t-cursor[data-state="link"] .t-dot  { opacity: 0; }
 
-/* over an image: ring fills and carries a label */
 .t-cursor[data-state="view"] .t-ring,
 .t-cursor[data-state="drag"] .t-ring { background: #fff; border-color: #fff; }
 .t-cursor[data-state="view"] .t-ring-l,
@@ -201,20 +131,13 @@ html.lenis, html.lenis body { height: auto; }
 .t-cursor[data-state="view"] .t-dot,
 .t-cursor[data-state="drag"] .t-dot { opacity: 0; }
 
-/* over running text: get out of the way, leave a caret-sized dot */
 .t-cursor[data-state="text"] .t-ring { opacity: 0; }
 
-/* pressed */
 .t-cursor.is-down .t-ring { border-width: 2px; }
 
-/* --- Native cursor. Kept, not replaced: hiding it entirely is the single
-       most common way these builds break for people who rely on it. It is
-       only suppressed where the ring genuinely stands in for it. --- */
 .t-page [data-cursor="view"],
 .t-page [data-cursor="drag"] { cursor: none; }
 
-/* --- Scroll progress. Right edge, blend-difference, exactly the
-       .scroll-indicator idea from the reference. --- */
 .t-prog {
   position: fixed;
   top: 4.5rem;
@@ -237,8 +160,6 @@ html.lenis, html.lenis body { height: auto; }
   transform-origin: top;
 }
 
-/* --- Load wipe. Stands in for the reference's Rive transition: a panel
-       that clears upward once fonts and the first paint are ready. --- */
 .t-wipe {
   position: fixed;
   inset: 0;
@@ -256,11 +177,6 @@ html.lenis, html.lenis body { height: auto; }
   color: var(--bone);
   letter-spacing: -0.02em;
 }
-
-
-/* ==========================================================================
-   4. CHROME — NAV
-   ========================================================================== */
 
 .t-nav {
   position: fixed;
@@ -287,7 +203,6 @@ html.lenis, html.lenis body { height: auto; }
 
 .t-nav-r { display: flex; align-items: center; gap: 0.7rem; }
 
-/* Pill button. Sits outside the blend layer so the accent stays true. */
 .t-pill {
   font-family: var(--mono);
   font-size: 0.62rem;
@@ -328,15 +243,6 @@ html.lenis, html.lenis body { height: auto; }
   background: currentColor;
 }
 
-
-/* ==========================================================================
-   5. HERO
-   Sticky-track pattern: an outer element two viewports tall, an inner
-   element stuck at 100vh. Scrolling the second viewport scrubs the hero
-   out instead of pushing it up, which is what makes the reference hero
-   feel like it is being *left behind* rather than scrolled past.
-   ========================================================================== */
-
 .t-hero-track { height: 200vh; }
 
 .t-hero {
@@ -349,8 +255,6 @@ html.lenis, html.lenis body { height: auto; }
   padding-bottom: clamp(1rem, 4vh, 3rem);
 }
 
-/* Backdrop: soft blobs, the stand-in for the reference's WebGL ground.
-   Cheap, GPU-friendly, and it moves on scroll so it reads as parallax. */
 .t-hero-bg {
   position: absolute;
   inset: -12%;
@@ -362,7 +266,6 @@ html.lenis, html.lenis body { height: auto; }
   will-change: transform;
 }
 
-/* The portrait. object-position keeps the face in frame as it crops. */
 .t-hero-fig {
   position: absolute;
   bottom: 0;
@@ -383,8 +286,6 @@ html.lenis, html.lenis body { height: auto; }
   filter: grayscale(1) contrast(1.06);
 }
 
-/* Name plate. Sits *over* the portrait bottom, mixed so the letters cut
-   into the image — the layering trick that sells these heroes. */
 .t-hero-name {
   position: relative;
   z-index: 2;
@@ -404,7 +305,6 @@ html.lenis, html.lenis body { height: auto; }
   z-index: 3;
 }
 
-/* Corner card — the reference's NEXT RACE widget. */
 .t-card {
   position: absolute;
   left: var(--pad);
@@ -449,16 +349,8 @@ html.lenis, html.lenis body { height: auto; }
   100% { transform: scaleY(0); transform-origin: bottom; }
 }
 
-
-/* ==========================================================================
-   6. MARQUEE & STATEMENT
-   ========================================================================== */
-
 .t-marquee { padding: clamp(3rem, 10vh, 7rem) 0; overflow: hidden; }
 
-/* Each row is a flex strip duplicated once in the HTML, translated by JS.
-   Two copies is all you need for a seamless loop if the loop distance is
-   exactly the width of one copy. */
 .t-mq-row {
   display: flex;
   width: max-content;
@@ -494,7 +386,6 @@ html.lenis, html.lenis body { height: auto; }
   -webkit-text-stroke: 1px var(--ink);
 }
 
-/* Statement block — quote left, captioned collage right. */
 .t-state {
   padding: clamp(3rem, 12vh, 8rem) 0;
   display: grid;
@@ -520,8 +411,6 @@ html.lenis, html.lenis body { height: auto; }
   gap: 0.8rem;
 }
 
-/* Captioned tile. Used by the collage, the track and the archive, so the
-   caption behaviour is defined once. */
 .t-tile {
   position: relative;
   overflow: hidden;
@@ -554,8 +443,6 @@ html.lenis, html.lenis body { height: auto; }
 .t-tile.is-wide { aspect-ratio: 5 / 3; }
 .t-tile.is-off  { margin-top: 2.4rem; }
 
-/* Placeholder art: a generated field so the page reads finished without
-   real photography in every slot. Swap for <img> as shots arrive. */
 .t-ph {
   width: 100%;
   height: 100%;
@@ -565,19 +452,8 @@ html.lenis, html.lenis body { height: auto; }
     linear-gradient(160deg, var(--bone-2), color-mix(in srgb, var(--ink) 12%, var(--bone-2)));
 }
 
-
-/* ==========================================================================
-   7. TRACK — HORIZONTAL PIN
-   The load-bearing trick. A tall outer spacer gives the section scroll
-   distance; the inner sticky pane holds still while JS translates the
-   rail sideways by (railWidth - viewportWidth). Vertical wheel input,
-   horizontal motion, no nested scroll container.
-   ========================================================================== */
-
 .t-track { position: relative; }
 
-/* Height = one viewport to pin + the horizontal distance to cover.
-   Set from JS so it stays right on resize; this is the fallback. */
 .t-track-spacer { height: 320vh; }
 
 .t-track-pin {
@@ -610,15 +486,7 @@ html.lenis, html.lenis body { height: auto; }
 
 .t-rail .t-tile { width: clamp(220px, 26vw, 380px); flex: none; }
 
-/* Every second tile drops, so the rail has a rhythm instead of a row. */
 .t-rail .t-tile:nth-child(even) { transform: translateY(clamp(1rem, 4vh, 3rem)); }
-
-
-/* ==========================================================================
-   8. SPLIT — THEME FLIP
-   Two full-height panels. When the second one crosses the middle of the
-   viewport, JS adds .is-dark to .t-page and every palette name inverts.
-   ========================================================================== */
 
 .t-split { position: relative; }
 
@@ -633,7 +501,6 @@ html.lenis, html.lenis body { height: auto; }
 
 .t-half-in { display: grid; gap: 1.2rem; justify-items: center; max-width: 46ch; }
 
-/* Outlined word stack — ON over SCREEN, second word hollow. */
 .t-stack { display: grid; gap: 0; }
 
 .t-stack span {
@@ -661,14 +528,6 @@ html.lenis, html.lenis body { height: auto; }
 }
 
 .t-link:hover { border-color: var(--key); color: var(--key); }
-
-
-/* ==========================================================================
-   9. ARCHIVE
-   The dense tile wall with a year rail — same job as the helmet wall in
-   the reference, filled here with decks. Grid, not flex, so the odd
-   spans line up.
-   ========================================================================== */
 
 .t-arch { padding: clamp(3rem, 12vh, 8rem) 0; }
 
@@ -711,7 +570,6 @@ html.lenis, html.lenis body { height: auto; }
 .t-deck-n { font-family: var(--display); font-size: 1.1rem; text-transform: uppercase; position: relative; }
 .t-deck-y { position: relative; }
 
-/* Year separator card, sitting inside the same flow. */
 .t-deck.is-year {
   background: none;
   border-style: dashed;
@@ -719,11 +577,6 @@ html.lenis, html.lenis body { height: auto; }
   align-items: center;
   text-align: center;
 }
-
-
-/* ==========================================================================
-   10. BAND / STACK / SOCIALS
-   ========================================================================== */
 
 .t-band {
   padding: clamp(3rem, 10vh, 7rem) 0;
@@ -772,11 +625,6 @@ html.lenis, html.lenis body { height: auto; }
 
 .t-soc:hover { background: var(--key); color: var(--on-key); border-color: var(--key); }
 
-
-/* ==========================================================================
-   11. FOOTER
-   ========================================================================== */
-
 .t-foot { border-top: 1px solid var(--line); padding: clamp(2.4rem, 8vh, 5rem) 0 1.4rem; }
 
 .t-foot-top {
@@ -799,7 +647,6 @@ html.lenis, html.lenis body { height: auto; }
 
 .t-foot-col a:hover { color: var(--key); }
 
-/* Oversized wordmark, clipped by the page edge. */
 .t-foot-mark {
   font-family: var(--display);
   font-size: clamp(2.4rem, 12vw, 11rem);
@@ -820,19 +667,12 @@ html.lenis, html.lenis body { height: auto; }
   margin-top: 1.4rem;
 }
 
-
-/* ==========================================================================
-   12. RESPONSIVE & MOTION
-   ========================================================================== */
-
 @media (max-width: 860px) {
   .t-state { grid-template-columns: 1fr; }
   .t-hero-fig { width: min(74vw, 420px); }
   .t-prog { display: none; }
 }
 
-/* Touch: there is no hover pointer to decorate, and a horizontal pin is
-   worse than a plain scroller on a phone, so the rail becomes swipeable. */
 @media (hover: none) {
   .t-cursor { display: none; }
   .t-page [data-cursor] { cursor: auto; }
@@ -844,8 +684,6 @@ html.lenis, html.lenis body { height: auto; }
   .t-rail .t-tile:nth-child(even) { transform: none; }
 }
 
-/* Reduced motion: keep the layout, drop the movement. JS reads the same
-   query and skips Lenis, the marquee loop and every scrub. */
 @media (prefers-reduced-motion: reduce) {
   .t-cursor { display: none; }
   .t-page [data-cursor] { cursor: auto; }
@@ -861,25 +699,14 @@ html.lenis, html.lenis body { height: auto; }
   }
 }
 
-
-/* ==========================================================================
-   13. STATE CLASSES SET FROM JS
-   These only ever apply once js/test.js has run, so a failed script leaves
-   the page fully visible rather than blank.
-   ========================================================================== */
-
-/* Marquee set. Two per row, identical, so the wrap seam lands nowhere. */
 .t-mq-set { display: flex; gap: 2.5rem; }
 
-/* .no-fx = GSAP missing or reduced motion. Pins and scrubs are off, so the
-   sticky sections must collapse to normal flow or they leave dead scroll. */
 .no-fx .t-hero-track { height: auto; }
 .no-fx .t-hero { position: static; height: auto; min-height: 100vh; }
 .no-fx .t-track-spacer { height: auto !important; }
 .no-fx .t-track-pin { position: static; height: auto; padding: clamp(3rem, 10vh, 6rem) 0; }
 .no-fx .t-rail { overflow-x: auto; transform: none !important; }
 
-/* Reveal fallback: IntersectionObserver adds .is-in. */
 .no-fx [data-reveal] {
   opacity: 0;
   transform: translateY(24px);

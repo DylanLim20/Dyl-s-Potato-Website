@@ -1,25 +1,4 @@
-/* ==========================================================================
-   TEST — MOTION
-   Everything the editorial page does that CSS cannot do alone.
 
-   The stack matches what the reference build uses, because it is the stack
-   these sites converge on:
-
-     Lenis          takes over scrolling so it has momentum and can be read
-     GSAP           tweens
-     ScrollTrigger  pins and scroll-scrubbed timelines
-
-   All three come off a CDN in test.html. If any of them fails to load the
-   page still works: boot() falls back to a no-effects mode where the
-   layout is plain and vertical, the cursor still runs, and reveals happen
-   through IntersectionObserver instead. Nothing here is load-bearing for
-   reading the page.
-
-   CONTENTS
-   1. Boot & capability      4. Reveals
-   2. Cursor                 5. Marquee
-   3. Scroll progress        6. Hero, track, theme
-   ========================================================================== */
 
 (function () {
   "use strict";
@@ -27,9 +6,6 @@
   var page = document.querySelector(".t-page");
   if (!page) return;
 
-  /* Capability gates. Both are decisions about intent, not about screen
-     size: a laptop with a trackpad still wants the cursor, a phone plugged
-     into a monitor still does not. */
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var hasHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
@@ -39,19 +15,11 @@
 
   var lenis = null;
 
-  /* ========================================================================
-     1. BOOT & CAPABILITY
-     ======================================================================== */
-
   function boot() {
     if (!fx) page.classList.add("no-fx");
 
     if (hasGsap) window.gsap.registerPlugin(window.ScrollTrigger);
 
-    /* --- Lenis. The important part is not the easing, it is that scroll
-           position now lives in JS. ScrollTrigger has to be told to read
-           from Lenis instead of from the scroll event, or pins jitter by
-           one frame forever. --- */
     if (hasLenis && !reduced) {
       lenis = new window.Lenis({
         duration: 1.05,
@@ -82,8 +50,6 @@
 
     wipe();
 
-    /* Anchor links have to go through Lenis, otherwise the browser jumps
-       the real scroll position and Lenis snaps back. */
     document.querySelectorAll('.t-page a[href^="#"]').forEach(function (a) {
       a.addEventListener("click", function (e) {
         var target = document.querySelector(a.getAttribute("href"));
@@ -95,8 +61,6 @@
     });
   }
 
-  /* The load wipe clears once fonts are resolved, so the big display type
-     does not swap face in front of the viewer. */
   function wipe() {
     var el = document.querySelector(".t-wipe");
     if (!el) return;
@@ -124,30 +88,6 @@
     }
   }
 
-  /* ========================================================================
-     2. CURSOR
-     Three layers, one loop:
-
-       dot   written on every mousemove with no easing. This is the truth
-             of where the pointer is, so clicks always feel exact.
-       ring  eased toward the same point inside a rAF loop. The lag is the
-             entire effect - it reads as mass.
-       label text inside the ring, for the VIEW and DRAG states.
-
-     Both layers sit in a mix-blend-mode: difference container, so they
-     invert against whatever is behind them. That is why the cursor needs
-     no knowledge of the light/dark flip.
-
-     State is not stored in JS. Elements declare data-cursor="view" and the
-     nearest one wins via closest(), so a caption inside a tile inherits the
-     tile state instead of fighting it. JS copies that onto the container as
-     data-state and CSS owns every visual difference.
-
-     The native cursor is deliberately kept everywhere except the two states
-     where the ring genuinely replaces it. Hiding the system cursor across a
-     whole page is the most common way these builds turn hostile.
-     ======================================================================== */
-
   function cursor() {
     if (!hasHover || reduced) return;
 
@@ -157,9 +97,6 @@
     var label = document.querySelector(".t-ring-l");
     if (!root || !dot || !ring) return;
 
-    /* Target (px, py) is where the pointer is. (rx, ry) is where the ring
-       has got to. scale is lerped the same way so state changes have the
-       same weight as movement. */
     var px = -100, py = -100, rx = -100, ry = -100;
     var scale = 1, scaleTo = 1;
     var live = false;
@@ -177,14 +114,12 @@
       py = e.clientY;
 
       if (!live) {
-        /* First move: drop the ring straight onto the pointer before
-           fading in, so it does not fly in from the corner. */
+
         live = true;
         rx = px; ry = py;
         root.classList.add("is-live");
       }
 
-      /* --- Resolve state from the element under the pointer. --- */
       var el = e.target instanceof Element ? e.target.closest("[data-cursor]") : null;
 
       if (el) {
@@ -194,10 +129,6 @@
           label.textContent = el.dataset.cursorLabel || (kind === "drag" ? "DRAG" : "VIEW");
         }
 
-        /* --- Magnet. The ring is pulled most of the way to the element
-               centre while the dot keeps tracking the real pointer, so a
-               button feels like it has gravity without the click target
-               ever moving. --- */
         if (el.hasAttribute("data-magnet")) {
           var r = el.getBoundingClientRect();
           px = r.left + r.width / 2 + (e.clientX - (r.left + r.width / 2)) * 0.25;
@@ -210,7 +141,6 @@
       }
     }, { passive: true });
 
-    /* Leaving the window has to hide the cursor, or it freezes mid-page. */
     document.addEventListener("mouseleave", function () { root.classList.remove("is-live"); });
     document.addEventListener("mouseenter", function () { if (live) root.classList.add("is-live"); });
 
@@ -218,9 +148,7 @@
     window.addEventListener("mouseup", function () { root.classList.remove("is-down"); });
 
     (function loop() {
-      /* Exponential smoothing. 0.18 is the whole feel of the thing: lower
-         is heavier and starts to feel broken past about 0.08, higher stops
-         reading as lag at all above roughly 0.4. */
+
       rx += (px - rx) * 0.18;
       ry += (py - ry) * 0.18;
       scale += (scaleTo - scale) * 0.14;
@@ -233,12 +161,6 @@
       requestAnimationFrame(loop);
     })();
   }
-
-  /* ========================================================================
-     3. SCROLL PROGRESS
-     The right-edge bar, blend-difference so it reads on both skins. This is
-     the one piece of pointer/scroll furniture the reference actually ships.
-     ======================================================================== */
 
   function progress() {
     var wrap = document.querySelector(".t-prog");
@@ -257,20 +179,11 @@
     draw();
   }
 
-  /* ========================================================================
-     4. REVEALS
-     Masked upward reveal per line. Real per-line splitting needs a text
-     splitter (the reference ships SplitType); here the lines that matter
-     are marked up as .t-line in the HTML, and everything else gets a
-     staggered fade-up on its container.
-     ======================================================================== */
-
   function reveals() {
     var groups = document.querySelectorAll("[data-reveal]");
 
     if (!fx) {
-      /* No GSAP: still reveal, just with a class and CSS transitions, so
-         nothing is stuck invisible. */
+
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (en) {
           if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); }
@@ -295,17 +208,6 @@
       });
     });
   }
-
-  /* ========================================================================
-     5. MARQUEE
-     Two identical sets per row. The row is translated left forever and
-     wrapped by exactly one set width plus one gap, which is what makes the
-     seam invisible.
-
-     Scroll velocity feeds two things: it adds to the drift speed, and it
-     skews the row. The skew is the cheap stand-in for the WebGL distortion
-     the reference runs on this section - same read, no shader.
-     ======================================================================== */
 
   function marquee() {
     var rows = Array.prototype.slice.call(document.querySelectorAll(".t-mq-row"));
@@ -336,8 +238,7 @@
     function measure() {
       state.forEach(function (s) {
         var gap = parseFloat(getComputedStyle(s.el).columnGap) || 0;
-        /* Row holds two sets and one gap between them, so one hop is
-           (total + gap) / 2. */
+
         s.loop = (s.el.scrollWidth + gap) / 2;
       });
     }
@@ -346,7 +247,7 @@
     window.addEventListener("resize", measure);
 
     (function loop() {
-      /* Decay velocity so the boost trails off instead of latching. */
+
       vel *= 0.9;
       var boost = Math.min(6, Math.abs(vel) * 0.4);
 
@@ -354,7 +255,7 @@
         s.x += s.dir * (s.speed + boost);
 
         if (s.loop > 0) {
-          /* Modulo both ways so it survives a scroll-driven overshoot. */
+
           if (s.x <= -s.loop) s.x += s.loop;
           if (s.x >= 0 && s.dir > 0) s.x -= s.loop;
         }
@@ -367,13 +268,6 @@
     })();
   }
 
-  /* ========================================================================
-     6. HERO, TRACK, THEME
-     ======================================================================== */
-
-  /* Sticky-track hero. The outer element is two viewports tall and the
-     inner one is stuck at the top, so the second viewport of scroll scrubs
-     the hero apart instead of pushing it up the screen. */
   function hero() {
     var track = document.querySelector(".t-hero-track");
     if (!track) return;
@@ -387,17 +281,12 @@
       }
     });
 
-    /* Three depths moving at three rates is the whole parallax. */
     tl.to(".t-hero-bg", { yPercent: 14, scale: 1.08, ease: "none" }, 0)
       .to(".t-hero-fig", { yPercent: 10, scale: 0.94, ease: "none" }, 0)
       .to(".t-hero-name", { yPercent: -40, ease: "none" }, 0)
       .to(".t-hero-sub, .t-card, .t-scroll-cue", { opacity: 0, ease: "none" }, 0);
   }
 
-  /* Horizontal pin. The spacer supplies vertical distance, the pin holds
-     still, and the rail is translated by exactly its overflow. Setting the
-     spacer height from the measured rail width is what keeps the section
-     from ending early or leaving dead scroll at the end. */
   function track() {
     var section = document.querySelector(".t-track");
     var spacer = document.querySelector(".t-track-spacer");
@@ -428,9 +317,6 @@
     window.ScrollTrigger.addEventListener("refreshInit", size);
   }
 
-  /* Theme flip. One class on .t-page; every palette name inverts in CSS.
-     Toggled rather than scrubbed, because a half-inverted palette looks
-     like a bug. */
   function theme() {
     var dark = document.querySelector("[data-theme-dark]");
     if (!dark) return;
