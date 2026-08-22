@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Projects — Dylan</title>
-  <meta name="description" content="Arduino, Java, web, and Godot projects by Dylan.">
+  <meta name="description" content="Habit tracker, portfolio, Godot, Java, and Arduino projects by Dylan.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,30 +56,28 @@
 
         <article class="work">
           <div class="work-in">
-            <div class="work-shot">
-              <img src="assets/arduino-mp3-player.jpg"
-                   alt="The Arduino MP3 player on a breadboard" loading="lazy">
-            </div>
+            <button class="work-shot gallery-trigger" type="button"
+              data-gallery-title="Potato"
+              data-gallery-images="assets/potato-home.png|assets/potato-notebooks.png|assets/potato-overview.png"
+              data-gallery-labels="Home and page shortcuts|Notebook page|Overview analytics"
+              aria-label="Open Potato habit tracker screenshots">
+              <img src="assets/potato-home.png" alt="Potato habit tracker home screen" loading="lazy">
+              <span class="shot-badge">View 3</span>
+            </button>
             <div class="work-body">
               <div class="work-top">
-                <h2 class="work-name">Gesture MP3 Player</h2>
-                <span class="work-year">2025</span>
+                <h2 class="work-name">Potato</h2>
+                <span class="work-year">22/8/2026</span>
               </div>
               <p class="work-text">
-                An MP3 player on an Arduino Uno, with a DFPlayer Mini pulling
-                tracks off a microSD card. Buttons handle the obvious
-                controls and an ultrasonic sensor cause it was a waste not to use it - wave a
-                hand to play, pause or skip — with an LED flashing along to
-                whatever's going. Built for the IoT module, and wired up in
-                Tinkercad first.
+                A habit tracker app completed on 22/8/2026, with more updates planned. It has 13+ pages to explore, from tasks and notes to money, workouts, notebooks and analytics, but users can hide pages they do not want so the app stays customizable to each person's taste.
               </p>
               <ul class="tags">
-                <li class="tag">Arduino</li><li class="tag">C++</li>
-                <li class="tag">DFPlayer</li><li class="tag">Ultrasonic Sensor</li>
+                <li class="tag">Android</li><li class="tag">Habit Tracker</li>
+                <li class="tag">13+ Pages</li><li class="tag">Hide Pages</li>
               </ul>
               <div class="work-links">
-                <a class="work-link" href="https://youtu.be/p075roPKLVo" target="_blank" rel="noopener">Physical Presentation<span class="arw" aria-hidden="true">&#8594;</span></a>
-                <a class="work-link" href="https://youtu.be/Ldol8eW05cQ" target="_blank" rel="noopener">Tinkercad simumation <span class="arw" aria-hidden="true">&#8594;</span></a>
+                <a class="work-link" href="https://drive.google.com/file/d/1qef8YvTOlqY6pHI1HsnVn2g0AxUBZRIC/view?usp=sharing" target="_blank" rel="noopener">Download APK <span class="arw" aria-hidden="true">&#8594;</span></a>
               </div>
             </div>
           </div>
@@ -87,14 +85,72 @@
 
         <article class="work">
           <div class="work-in">
-            <div class="work-shot work-shot-grid">
-              <img class="shot-main" src="assets/notepad-background.png" alt="Dylan's Potato Notepad showing the background menu" loading="lazy">
-              <div class="shot-strip" aria-label="More Notepad screenshots">
-                <img src="assets/notepad-empty.png" alt="Blank Notepad editor window" loading="lazy">
-                <img src="assets/notepad-colour-picker.png" alt="Notepad colour picker dialog" loading="lazy">
-                <img src="assets/notepad-file-menu.png" alt="Notepad file menu" loading="lazy">
+            <button class="work-shot gallery-trigger" type="button"
+              data-gallery-title="This Portfolio"
+              data-gallery-images="assets/portfolio-home.png|assets/portfolio-projects-view.png|assets/portfolio-hobbies.png|assets/portfolio-gallery.png|assets/portfolio-contact.png"
+              data-gallery-labels="Home page|Projects page|Hobbies page|Gallery page|Contact page"
+              aria-label="Open portfolio screenshots">
+              <img src="assets/portfolio-home.png" alt="Screenshot of Dylan's portfolio home page" loading="lazy">
+              <span class="shot-badge">View 5</span>
+            </button>
+            <div class="work-body">
+              <div class="work-top">
+                <h2 class="work-name">This Portfolio</h2>
+                <span class="work-year">2026</span>
+              </div>
+              <p class="work-text">
+                Another personal project I've put off for some time due to school. Built with HTML, CSS and JavaScript. You're already lookin at it so not much more needed to be said XD. Released on 22 August (My bday)
+              </p>
+              <ul class="tags">
+                <li class="tag">HTML</li><li class="tag">CSS</li>
+                <li class="tag">JavaScript</li><li class="tag">Canvas</li>
+              </ul>
+              <div class="work-links">
+                <a class="work-link" href="#" target="_blank" rel="noopener">GitHub <span class="arw" aria-hidden="true">&#8594;</span></a>
               </div>
             </div>
+          </div>
+        </article>
+
+        <article class="work">
+          <div class="work-in">
+            <button class="work-shot gallery-trigger" type="button"
+              data-gallery-title="Godot Game"
+              data-gallery-images="assets/godot-menu.png|assets/godot-battle.png|assets/godot-character-gallery.png|assets/godot-memory-game.png|assets/godot-level-complete.png|assets/godot-level-select.png"
+              data-gallery-labels="Main menu|Battle quiz|Character gallery|Memory game|Level complete|Level select"
+              aria-label="Open Godot game screenshots">
+              <img src="assets/godot-menu.png" alt="Godot game main menu screenshot" loading="lazy">
+              <span class="shot-badge">View 6</span>
+            </button>
+            <div class="work-body">
+              <div class="work-top">
+                <h2 class="work-name">Godot Game</h2>
+                <span class="work-year">Sem 5</span>
+              </div>
+              <p class="work-text">
+                Final year project game made in Godot during semester 5. This is the submitted version of the project, built as a group project with three other teammates helping on the code while we worked on the gameplay systems together.
+              </p>
+              <ul class="tags">
+                <li class="tag">Godot</li><li class="tag">GDScript</li>
+                <li class="tag">Game Dev</li><li class="tag">Group Project</li>
+              </ul>
+              <div class="work-links">
+                <a class="work-link" href="https://github.com/DylanLim20/FYP-Done-" target="_blank" rel="noopener">GitHub <span class="arw" aria-hidden="true">&#8594;</span></a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="work">
+          <div class="work-in">
+            <button class="work-shot gallery-trigger" type="button"
+              data-gallery-title="Notepad"
+              data-gallery-images="assets/notepad-background.png|assets/notepad-empty.png|assets/notepad-colour-picker.png|assets/notepad-file-menu.png"
+              data-gallery-labels="Background picker|Blank editor|Colour picker|File menu"
+              aria-label="Open Notepad screenshots">
+              <img src="assets/notepad-background.png" alt="Dylan's Potato Notepad showing the background menu" loading="lazy">
+              <span class="shot-badge">View 4</span>
+            </button>
             <div class="work-body">
               <div class="work-top">
                 <h2 class="work-name">Notepad</h2>
@@ -120,44 +176,30 @@
         <article class="work">
           <div class="work-in">
             <div class="work-shot">
-              <img src="assets/portfolio-projects.png" alt="Screenshot of Dylan's portfolio projects page" loading="lazy">
+              <img src="assets/arduino-mp3-player.jpg"
+                   alt="The Arduino MP3 player on a breadboard" loading="lazy">
             </div>
             <div class="work-body">
               <div class="work-top">
-                <h2 class="work-name">This Portfolio</h2>
-                <span class="work-year">2026</span>
+                <h2 class="work-name">Arduino MP3 Player</h2>
+                <span class="work-year">2025</span>
               </div>
               <p class="work-text">
-                Another personal project I've put off for some time due to school. Built with HTML, CSS and JavaScript. You're already lookin at it so not much more needed to be said XD. Released on 22 August (My bday)
+                An MP3 player on an Arduino Uno, with a DFPlayer Mini pulling
+                tracks off a microSD card. Buttons handle the obvious
+                controls and an ultrasonic sensor cause it was a waste not to use it - wave a
+                hand to play, pause or skip — with an LED flashing along to
+                whatever's going. Built for the IoT module, and wired up in
+                Tinkercad first.
               </p>
               <ul class="tags">
-                <li class="tag">HTML</li><li class="tag">CSS</li>
-                <li class="tag">JavaScript</li><li class="tag">Canvas</li>
+                <li class="tag">Arduino</li><li class="tag">C++</li>
+                <li class="tag">DFPlayer</li><li class="tag">Ultrasonic Sensor</li>
               </ul>
               <div class="work-links">
-                <a class="work-link" href="#" target="_blank" rel="noopener">GitHub <span class="arw" aria-hidden="true">&#8594;</span></a>
+                <a class="work-link" href="https://youtu.be/p075roPKLVo" target="_blank" rel="noopener">Physical Presentation<span class="arw" aria-hidden="true">&#8594;</span></a>
+                <a class="work-link" href="https://youtu.be/Ldol8eW05cQ" target="_blank" rel="noopener">Tinkercad simumation <span class="arw" aria-hidden="true">&#8594;</span></a>
               </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="work">
-          <div class="work-in">
-            <div class="work-shot">
-              <div class="slot"><b>assets/godot-game.jpg</b><span>final year game screenshot</span></div>
-            </div>
-            <div class="work-body">
-              <div class="work-top">
-                <h2 class="work-name">Godot Game</h2>
-                <span class="work-year">Sem 5</span>
-              </div>
-              <p class="work-text">
-                Final year project game made in Godot during semester 5. It was a group project, with three other teammates helping on the code while we built the gameplay systems together.
-              </p>
-              <ul class="tags">
-                <li class="tag">Godot</li><li class="tag">GDScript</li>
-                <li class="tag">Game Dev</li><li class="tag">Group Project</li>
-              </ul>
             </div>
           </div>
         </article>

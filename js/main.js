@@ -119,6 +119,121 @@ function tilt() {
   });
 }
 
+function projectViewer() {
+  const triggers = $$(".gallery-trigger");
+  if (triggers.length === 0) return;
+
+  const viewer = document.createElement("div");
+  viewer.className = "viewer";
+  viewer.setAttribute("aria-hidden", "true");
+  viewer.innerHTML =
+    '<div class="viewer-panel" role="dialog" aria-modal="true" aria-label="Project screenshots">' +
+      '<div class="viewer-top">' +
+        '<p class="viewer-title"></p>' +
+        '<p class="viewer-count"></p>' +
+        '<button class="viewer-btn viewer-zoom" type="button">Zoom</button>' +
+        '<button class="viewer-btn viewer-close" type="button" aria-label="Close">X</button>' +
+      '</div>' +
+      '<div class="viewer-main"></div>' +
+      '<div class="viewer-bottom">' +
+        '<button class="viewer-btn viewer-prev" type="button" aria-label="Previous screenshot">&#8592;</button>' +
+        '<div class="viewer-thumbs"></div>' +
+        '<button class="viewer-btn viewer-next" type="button" aria-label="Next screenshot">&#8594;</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(viewer);
+
+  const title = $(".viewer-title", viewer);
+  const count = $(".viewer-count", viewer);
+  const main = $(".viewer-main", viewer);
+  const image = document.createElement("img");
+  image.alt = "";
+  const thumbs = $(".viewer-thumbs", viewer);
+  const close = $(".viewer-close", viewer);
+  const zoom = $(".viewer-zoom", viewer);
+  const prev = $(".viewer-prev", viewer);
+  const next = $(".viewer-next", viewer);
+
+  let images = [];
+  let labels = [];
+  let index = 0;
+  let lastFocus = null;
+
+  function show(nextIndex) {
+    if (images.length === 0) return;
+    if (!image.parentNode) main.appendChild(image);
+    index = (nextIndex + images.length) % images.length;
+    image.src = images[index];
+    image.alt = labels[index] || title.textContent + " screenshot " + (index + 1);
+    count.textContent = (index + 1) + " / " + images.length;
+    main.classList.remove("zoomed");
+    zoom.textContent = "Zoom";
+    $$(".viewer-thumb", thumbs).forEach((button, i) => {
+      button.classList.toggle("active", i === index);
+      button.setAttribute("aria-current", i === index ? "true" : "false");
+    });
+  }
+
+  function open(trigger) {
+    images = (trigger.dataset.galleryImages || "").split("|").filter(Boolean);
+    labels = (trigger.dataset.galleryLabels || "").split("|");
+    if (images.length === 0) return;
+
+    lastFocus = document.activeElement;
+    title.textContent = trigger.dataset.galleryTitle || "Screenshots";
+    thumbs.textContent = "";
+
+    images.forEach((src, i) => {
+      const button = document.createElement("button");
+      button.className = "viewer-thumb";
+      button.type = "button";
+      button.setAttribute("aria-label", labels[i] || "Screenshot " + (i + 1));
+      button.innerHTML = '<img src="' + src + '" alt="">';
+      button.addEventListener("click", () => show(i));
+      thumbs.appendChild(button);
+    });
+
+    viewer.classList.add("open");
+    viewer.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    show(0);
+    close.focus();
+  }
+
+  function hide() {
+    viewer.classList.remove("open");
+    viewer.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    main.classList.remove("zoomed");
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  triggers.forEach((trigger) => {
+    trigger.addEventListener("click", () => open(trigger));
+  });
+
+  close.addEventListener("click", hide);
+  prev.addEventListener("click", () => show(index - 1));
+  next.addEventListener("click", () => show(index + 1));
+  zoom.addEventListener("click", () => {
+    const zoomed = main.classList.toggle("zoomed");
+    zoom.textContent = zoomed ? "Fit" : "Zoom";
+  });
+  main.addEventListener("click", () => {
+    const zoomed = main.classList.toggle("zoomed");
+    zoom.textContent = zoomed ? "Fit" : "Zoom";
+  });
+  viewer.addEventListener("click", (event) => {
+    if (event.target === viewer) hide();
+  });
+  window.addEventListener("keydown", (event) => {
+    if (!viewer.classList.contains("open")) return;
+    if (event.key === "Escape") hide();
+    if (event.key === "ArrowLeft") show(index - 1);
+    if (event.key === "ArrowRight") show(index + 1);
+  });
+}
+
 
 
 
@@ -427,6 +542,7 @@ menu();
 reveal();
 portrait();
 tilt();
+projectViewer();
 rows();
 magnify();
 buttons();
