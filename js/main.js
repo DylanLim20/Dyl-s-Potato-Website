@@ -120,6 +120,8 @@ function tilt() {
 }
 
 function projectViewer() {
+  if (!document.body.classList.contains("projects-page")) return;
+
   const triggers = $$(".gallery-trigger");
   if (triggers.length === 0) return;
 
